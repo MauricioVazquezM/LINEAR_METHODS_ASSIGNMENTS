@@ -1,7 +1,7 @@
 ---
-title: "TAREA 1"
-author: "Mauricio Vazquez"
-date: '2024-09-15'
+title: "ESTADISTICA APLICADA II: TAREA 1"
+author: "Mauricio Vazquez Moran"
+date: '2024-09-17'
 output: html_document
 ---
 
