@@ -91,3 +91,32 @@ margen_error_banda <- t_critico * SE_y_gorro
 banda_inf <- y_gorro - margen_error_banda
 banda_sup <- y_gorro + margen_error_banda
 
+tabla_anova <- anova(modelo)
+print(tabla_anova)
+
+resumen_modelo <- summary(modelo)
+valor_p_f <- resumen_modelo$fstatistic[3]
+print(valor_p_f)
+if (valor_p_f < 0.05) {
+  print("Rechazamos la hipótesis nula: hay una relación lineal significativa.")
+} else {
+  print("No rechazamos la hipótesis nula: no hay suficiente evidencia de una relación lineal significativa.")
+}
+
+r <- sqrt(summary(modelo)$r.squared)
+signo_r <- ifelse(coef(modelo)["Equipos"] >= 0, "positivo", "negativo")
+
+data_02$residuales <- residuals(modelo)
+data_02$valores_predichos <- fitted(modelo)
+ggplot(data_02, aes(x = valores_predichos, y = residuales)) +
+  geom_point() +
+  geom_hline(yintercept = 0, color = "red", linetype = "dashed") +
+  labs(title = "Residuales vs. Valores Predichos",
+       x = "Valores Predichos (Servicio^)",
+       y = "Residuales")
+ggplot(data_02, aes(x = Equipos, y = residuales)) +
+  geom_point() +
+  geom_hline(yintercept = 0, color = "red", linetype = "dashed") +
+  labs(title = "Residuales vs. Equipos",
+       x = "Variable Independiente (Equipos)",
+       y = "Residuales")

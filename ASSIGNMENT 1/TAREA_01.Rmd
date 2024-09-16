@@ -133,6 +133,8 @@ Obtén la 𝑅2 de la regresión y proporciona una interpretación breve de este
 
 ```
 
+<br>
+
 ## **EJERCICIO 02**
 
 Una empresa que se dedica a la venta y mantenimiento de equipo de oficina
@@ -143,6 +145,7 @@ servicio y el tiempo (en minutos) que se tardó el personal de mantenimiento en
 el servicio (variable dependiente). Suponiendo que el modelo de regresión
 lineal simple de primer orden es válido:
 
+<br>
 
 ##### **Lectura de datos:**
 
@@ -153,6 +156,7 @@ head(data_02)
 
 ```
 
+<br>
 
 ##### **A) Estima la función de regresión.**
 
@@ -162,6 +166,7 @@ modelo <- lm(formula = Servicio ~ Equipos, data = data_02)
 summary(modelo)
 
 ```
+<br>
 
 ##### **B) Grafica tanto la función de regresión como los datos.**
 
@@ -175,6 +180,7 @@ ggplot(data_02, aes(x = Equipos, y = Servicio)) +
 
 ```
 
+<br>
 
 ##### **C) Proporciona una interpretación de los parámetros de regresión.**
 
@@ -203,6 +209,7 @@ Añadiendo al analisis previo, por medio de los otros valores brindados por la r
 
 - $Aproximadamente: 74.5958 min$
 
+<br>
 
 ##### **E) Obtén los residuales y la suma del cuadrado de los residuales, ¿cuál es la relación entre esta suma del cuadrado de los residuales y la cantidad $Q=\sum_{i=1}^{n} (Y_i - \beta_0 - \beta_1 X_i)^2$ ?**
 
@@ -222,6 +229,7 @@ SSE_str <- toString(SSE)
 Q es la suma de los errores exactos al cuadrado, mientras que la suma del cuadrado de los residuales es la suma del estimador epsilon al cuadrado.
 - Errores exactos vs. estimacion
 
+<br>
 
 ##### **F) Obtén los estimadores puntuales para $\sigma^2$ y $\sigma$. ¿En qué unidades se encuentra expresado $\sigma$?**
 
@@ -239,6 +247,7 @@ sigma_gorro <- sqrt(sigmac_gorro)
 
 - $\hat{\sigma} = \sqrt{\hat{\sigma}^2}$ : con un valor de $`r sigma_gorro`$ y sus unidades son minutos.
 
+<br>
 
 ##### **G) Estima el cambio en el tiempo medio de servicio cuando el número de copiadoras incrementa en 1. Usa un intervalo de confianza al 90%. Interpreta tu intervalo de confianza.**
 
@@ -270,6 +279,7 @@ li <- beta.1.gorro - vc*sqrt(mse/abajo)
 - Límite inferior: $`r ls`$
 - Intervalo = ($`r li`$, $`r ls`$)
 
+<br>
 
 ##### **H) Realiza una prueba t con $\alpha = 0.1$ para determinar si existe una relación lineal entre \( X \) y \( Y \). Señala las hipótesis, la regla de decisión y tu conclusión. ¿Cuál es el $valor-p$ de la prueba?**
 
@@ -286,11 +296,13 @@ valor_p <- summary_modelo$coefficients["Equipos", "Pr(>|t|)"]
 
 En conclusion, hay evidencia para rechazar la hipotesis nula y aceptamos que hay relación lineal entre equipos y servicio.
 
+<br>
 
 ##### **I) Los resultados obtenidos en G) y H), ¿son consistentes?**
 
 - Observamos que el intervalo de confianza para la estimación de $\beta_1$ no contiene el valor 0. Además, la prueba t muestra un alto nivel de significancia. Estos resultados son coherentes, lo que sugiere que hay una relación lineal entre $X$ y $Y$. Por lo tanto, podemos afirmar esto con un alto grado de probabilidad y confianza.
 
+<br>
 
 ##### **J) El fabricante sugiere que el tiempo medio requerido no debería incrementarse en más de 14 minutos por cada copiadora adicional. Realiza una prueba adicional para determinar si este estándar está siendo cumplido por la empresa. Controla para una $\alpha = 0.05$, señala las hipótesis, la regla de decisión y tu conclusión. ¿Cuál es el $valor-p$ de la prueba? **
 
@@ -304,14 +316,15 @@ t_value <- (coeficiente_estimado - 14) / std_error
 
 - El $valor-p$ es: $`r t_value`$
 
+<br>
 
 ##### **K) ¿$\hat{\beta_0}$ proporciona alguna información relevante sobre el tiempo de “inicio” de una llamada de servicio?**
 
 - En este caso, no tiene lógica tener una llamada de servicio si no hay equipos que requieran mantenimiento. Como se indicó anteriormente, esto no tiene una interpretación práctica.
 
+<br>
 
 ##### **L) Calcula el intervalo al 90% de confianza para el tiempo medio de servicio en solicitudes en las que se pide dar servicio a seis equipos. Interpreta tu intervalo de confianza.** 
-
 
 ```{r}
 
@@ -332,9 +345,9 @@ IC_superior <- tiempo_estimado_6 + margen_error
 
 - El intervalo de confianza es: ($`r IC_inferior`$,$`r IC_superior`$)
 
+<br>
 
 ##### **M) Calcula el intervalo de confianza para la próxima solicitud de servicio que involucre seis equipos. Compara este intervalo con el del inciso anterior, ¿cuál debería ser mayor y por qué?**
-
 
 ```{r}
 
@@ -353,11 +366,13 @@ IC_superior_prediccion <- tiempo_estimado_6 + margen_error_prediccion
 
 - El segundo intervalo debería de tener un rango mayor ya que incluye el factor predicción.
 
+<br>
 
 ##### **N) La administración desea estimar el tiempo esperado de servicio por equipo en solicitudes para seis equipos. Obtén el intervalo de confianza apropiado transformando el intervalo de confianza del inciso (l). Interpreta el intervalo de confianza calculado.**
 
 - Dividiendo entre 6 el intervalo de confianza pasado, obtenemos $[14.55, 15.33]$. Este es el tiempo medio de servicio por equipo en minutos.
 
+<br>
 
 #####  **O) Determina los límites de la banda del 90% de confianza para la línea de regresión cuando \( X_h = 6 \). La banda en este punto, ¿es más ancha que los intervalos de confianza obtenidos en el inciso (l)? ¿Debería serlo?**
 
@@ -383,51 +398,85 @@ banda_sup <- y_gorro + margen_error_banda
 
 - Definitivamente es mas ancha. Es lo que esperábamos dado que se tiene en cuenta la incertidumbre adicional en la predicción.
 
+<br>
 
 #####  **P) Obtén la tabla ANOVA para el modelo ajustado.**
 
+```{r}
+
+tabla_anova <- anova(modelo)
+print(tabla_anova)
+
+```
+
+<br>
+
+##### **Q) Realiza una prueba F para determinar si existe o no una relación lineal entre el tiempo empleado y el número de máquinas a las que se realizó el servicio. Usa un $\alpha = 0.10$.  Señala las hipótesis, la regla de decisión y tu conclusión.**
 
 ```{r}
+
+resumen_modelo <- summary(modelo)
+valor_p_f <- resumen_modelo$fstatistic[3]
+
+print(valor_p_f)
+if (valor_p_f < 0.05) {
+  print("Rechazamos la hipótesis nula: hay una relación lineal significativa.")
+} else {
+  print("No rechazamos la hipótesis nula: no hay suficiente evidencia de una relación lineal significativa.")
+}
 
 
 ```
 
-### Inciso q:
+<br>
 
-Realiza una prueba F para determinar si existe o no una relación lineal entre el tiempo empleado y el número de máquinas a las que se realizó el servicio. Usa un 𝛼 = 0.10. Señala las hipótesis, la regla de decisión y tu conclusión.
+##### **R) ¿En cuánto se reduce, en términos relativos, la variación total al incluir el número de máquinas como variable explicativa al análisis?**
 
+\[ R^2 = \frac{\text{Variación explicada por el modelo}}{\text{Variación total}} = 1 - \frac{\text{SSE}}{\text{SST}} \]
+
+donde:
+
+- **SSE** es la suma de cuadrados del error (variación no explicada por el modelo).
+- **SST** es la suma total de cuadrados (variación total de los datos).
+
+<br>
+
+##### **S) Calcula $r$, ¿cuál debería ser el signo de $r$?**
 
 ```{r}
 
+r <- sqrt(summary(modelo)$r.squared)
+signo_r <- ifelse(coef(modelo)["Equipos"] >= 0, "positivo", "negativo")
 
 ```
 
-### Inciso r:
+Esperaríamos que tuviera un signo positivo, ya que anticipamos una relación directa entre el servicio y el número de equipos.
 
-¿En cuánto se reduce, en términos relativos, la variación total al incluir el número de máquinas como variable explicativa al análisis?
+- Un mayor número de equipos implica un mayor tiempo de servicio.
 
+- El coeficiente de correlación r es $`r r`$ con signo $`r signo_r`$.
 
-```{r}
+<br>
 
-
-```
-
-### Inciso s:
-
-Calcula 𝑟, ¿cuál debería ser el signo de 𝑟?
-
+##### **T) Gráfica los residuales de la regresión contra \( \hat{Y} \) y contra \( X \).**
 
 ```{r}
 
+data_02$residuales <- residuals(modelo)
+data_02$valores_predichos <- fitted(modelo)
 
-```
+ggplot(data_02, aes(x = valores_predichos, y = residuales)) +
+  geom_point() +
+  geom_hline(yintercept = 0, color = "red", linetype = "dashed") +
+  labs(title = "Residuales vs. Valores Predichos",
+       x = "Valores Predichos (Servicio^)",
+       y = "Residuales")
 
-### Inciso t:
-
-Grafica los residuales de la regresión contra 𝑌̂ y contra 𝑋.
-
-
-```{r}
-
+ggplot(data_02, aes(x = Equipos, y = residuales)) +
+  geom_point() +
+  geom_hline(yintercept = 0, color = "red", linetype = "dashed") +
+  labs(title = "Residuales vs. Equipos",
+       x = "Variable Independiente (Equipos)",
+       y = "Residuales")
 
 ```
