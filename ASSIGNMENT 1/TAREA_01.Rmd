@@ -27,7 +27,7 @@ de regresión lineal simple es apropiado.
 ### Lectura de datos:
 
 ```{r}
-data <- read.table(file = "datos_ej_1.txt", header = FALSE, sep = "|", strip.white = TRUE)
+data <- read.table(file = "datos_ej_1.txt", header = FALSE, sep = "|", strip.white = TRUE, skip = 1)
 names(data) <- c("Tamaños", "Num_horas")
 head(data)
 
@@ -159,6 +159,8 @@ Estima la función de regresión.
 
 ```{r}
 
+modelo <- lm(formula = Servicio ~ Equipos, data = data_02)
+summary(modelo)
 
 ```
 
@@ -169,6 +171,11 @@ Grafica tanto la función de regresión como los datos.
 
 ```{r}
 
+ggplot(data_02, aes(x = Equipos, y = Servicio)) +
+  geom_point() +  
+  geom_smooth(method = "lm", se = FALSE, color = "blue") +
+  labs(title = "Relación entre Servicio y Equipos", x = "Equipos", y = "Tiempo de Servicio (minutos)") +
+  theme_minimal()
 
 ```
 
