@@ -59,3 +59,35 @@ li <- beta.1.gorro - vc*sqrt(mse/abajo)
 summary_modelo <- summary(modelo)
 valor_p <- summary_modelo$coefficients["Equipos", "Pr(>|t|)"]
 
+coeficiente_estimado <- coef(modelo)["Equipos"]
+std_error <- summary(modelo)$coefficients["Equipos", "Std. Error"]
+t_value <- (coeficiente_estimado - 14) / std_error
+
+tiempo_estimado_6 <- coef(modelo)["(Intercept)"] + coef(modelo)["Equipos"] * 6
+n <- nrow(data_02)
+x_bar <- mean(data_02$Equipos)
+sigma_gorro <- sqrt(sum(residuals(modelo)^2) / (n - 2))
+SE <- sigma_gorro * sqrt(1/n + (6 - x_bar)^2 / sum((data_02$Equipos - x_bar)^2))
+t_test <- qt(0.95, df = n - 2)
+margen_error <- t_test * SE
+IC_inferior <- tiempo_estimado_6 - margen_error
+IC_superior <- tiempo_estimado_6 + margen_error
+
+tiempo_estimado_6 <- coef(modelo)["(Intercept)"] + coef(modelo)["Equipos"] * 6
+SE_prediccion <- sigma_gorro * sqrt(1 + 1/n + (6 - x_bar)^2 / sum((data_02$Equipos - x_bar)^2))
+t_test <- qt(0.95, df = n - 2)
+margen_error_prediccion <- t_test * SE_prediccion
+IC_inferior_prediccion <- tiempo_estimado_6 - margen_error_prediccion
+IC_superior_prediccion <- tiempo_estimado_6 + margen_error_prediccion
+
+y_gorro <- predict(modelo, newdata = data.frame(Equipos = 6), interval = "confidence", level = 0.90)[, "fit"]
+n <- nrow(data_02)
+x_bar <- mean(data_02$Equipos)
+S_xx <- sum((data_02$Equipos - x_bar)^2)
+sigma_hat <- sqrt(sum(residuals(modelo)^2) / (n - 2))
+SE_y_gorro <- sigma_hat * sqrt(1 + 1/n + (6 - x_bar)^2 / S_xx)
+t_critico <- qt(0.95, df = n - 2)
+margen_error_banda <- t_critico * SE_y_gorro
+banda_inf <- y_gorro - margen_error_banda
+banda_sup <- y_gorro + margen_error_banda
+

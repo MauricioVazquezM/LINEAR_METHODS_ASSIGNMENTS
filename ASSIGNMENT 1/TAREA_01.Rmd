@@ -133,7 +133,7 @@ Obtén la 𝑅2 de la regresión y proporciona una interpretación breve de este
 
 ```
 
-## EJERCICIO 02
+## **EJERCICIO 02**
 
 Una empresa que se dedica a la venta y mantenimiento de equipo de oficina
 proporciona los datos que se proporcionan, relativos a 45 llamadas de
@@ -144,7 +144,7 @@ el servicio (variable dependiente). Suponiendo que el modelo de regresión
 lineal simple de primer orden es válido:
 
 
-### Lectura de datos:
+##### **Lectura de datos:**
 
 ```{r}
 data_02 <- read.table(file = "datos_ej_2.txt", header = FALSE, sep = "|", strip.white = TRUE)
@@ -154,7 +154,7 @@ head(data_02)
 ```
 
 
-### **A) Estima la función de regresión.**
+##### **A) Estima la función de regresión.**
 
 ```{r}
 
@@ -163,7 +163,7 @@ summary(modelo)
 
 ```
 
-### **B) Grafica tanto la función de regresión como los datos.**
+##### **B) Grafica tanto la función de regresión como los datos.**
 
 ```{r}
 
@@ -176,7 +176,7 @@ ggplot(data_02, aes(x = Equipos, y = Servicio)) +
 ```
 
 
-### **C) Proporciona una interpretación de los parámetros de regresión.**
+##### **C) Proporciona una interpretación de los parámetros de regresión.**
 
 Obtuvimos que los estimadores de los coeficientes de regresión son:
 
@@ -199,12 +199,12 @@ Añadiendo al analisis previo, por medio de los otros valores brindados por la r
 - La $R^{2}$ nos indica que se logra explicar, en cierta medida, la variabilidad en el tiempo de servicio por la variabilidad en el numero de equipos.
 
 
-### **D) ¿Cuál es la estimación del tiempo que se tardará un mecánico en dar servicio a 5 equipos?**
+##### **D) ¿Cuál es la estimación del tiempo que se tardará un mecánico en dar servicio a 5 equipos?**
 
 - $Aproximadamente: 74.5958 min$
 
 
-### **E) Obtén los residuales y la suma del cuadrado de los residuales, ¿cuál es la relación entre esta suma del cuadrado de los residuales y la cantidad $Q=\sum_{i=1}^{n} (Y_i - \beta_0 - \beta_1 X_i)^2$ ?**
+##### **E) Obtén los residuales y la suma del cuadrado de los residuales, ¿cuál es la relación entre esta suma del cuadrado de los residuales y la cantidad $Q=\sum_{i=1}^{n} (Y_i - \beta_0 - \beta_1 X_i)^2$ ?**
 
 ```{r}
 
@@ -223,7 +223,7 @@ Q es la suma de los errores exactos al cuadrado, mientras que la suma del cuadra
 - Errores exactos vs. estimacion
 
 
-### **F) Obtén los estimadores puntuales para $\sigma^2$ y $\sigma$. ¿En qué unidades se encuentra expresado $\sigma$?**
+##### **F) Obtén los estimadores puntuales para $\sigma^2$ y $\sigma$. ¿En qué unidades se encuentra expresado $\sigma$?**
 
 ```{r}
 
@@ -240,7 +240,7 @@ sigma_gorro <- sqrt(sigmac_gorro)
 - $\hat{\sigma} = \sqrt{\hat{\sigma}^2}$ : con un valor de $`r sigma_gorro`$ y sus unidades son minutos.
 
 
-### **G) Estima el cambio en el tiempo medio de servicio cuando el número de copiadoras incrementa en 1. Usa un intervalo de confianza al 90%. Interpreta tu intervalo de confianza.**
+##### **G) Estima el cambio en el tiempo medio de servicio cuando el número de copiadoras incrementa en 1. Usa un intervalo de confianza al 90%. Interpreta tu intervalo de confianza.**
 
 ```{r}
 
@@ -271,7 +271,7 @@ li <- beta.1.gorro - vc*sqrt(mse/abajo)
 - Intervalo = ($`r li`$, $`r ls`$)
 
 
-### **H) Realiza una prueba t con $\alpha = 0.1$ para determinar si existe una relación lineal entre \( X \) y \( Y \). Señala las hipótesis, la regla de decisión y tu conclusión. ¿Cuál es el $valor-p$ de la prueba?**
+##### **H) Realiza una prueba t con $\alpha = 0.1$ para determinar si existe una relación lineal entre \( X \) y \( Y \). Señala las hipótesis, la regla de decisión y tu conclusión. ¿Cuál es el $valor-p$ de la prueba?**
 
 ```{r}
 
@@ -287,78 +287,104 @@ valor_p <- summary_modelo$coefficients["Equipos", "Pr(>|t|)"]
 En conclusion, hay evidencia para rechazar la hipotesis nula y aceptamos que hay relación lineal entre equipos y servicio.
 
 
-### **I) Los resultados obtenidos en G) y H), ¿son consistentes?
+##### **I) Los resultados obtenidos en G) y H), ¿son consistentes?**
+
+- Observamos que el intervalo de confianza para la estimación de $\beta_1$ no contiene el valor 0. Además, la prueba t muestra un alto nivel de significancia. Estos resultados son coherentes, lo que sugiere que hay una relación lineal entre $X$ y $Y$. Por lo tanto, podemos afirmar esto con un alto grado de probabilidad y confianza.
+
+
+##### **J) El fabricante sugiere que el tiempo medio requerido no debería incrementarse en más de 14 minutos por cada copiadora adicional. Realiza una prueba adicional para determinar si este estándar está siendo cumplido por la empresa. Controla para una $\alpha = 0.05$, señala las hipótesis, la regla de decisión y tu conclusión. ¿Cuál es el $valor-p$ de la prueba? **
 
 ```{r}
 
+coeficiente_estimado <- coef(modelo)["Equipos"]
+std_error <- summary(modelo)$coefficients["Equipos", "Std. Error"]
+t_value <- (coeficiente_estimado - 14) / std_error
 
 ```
 
-### Inciso j:
-
-El fabricante sugiere que el tiempo medio requerido no debería incrementarse en más de 14 minutos por cada copiadora adicional. Realiza una prueba
-adicional para determinar si este estándar está siendo cumplido por la empresa. Controla para una 𝛼 = 0.05, señala las hipótesis, la regla de decisión y tu conclusión. ¿Cuál es el valor-p de la prueba?
+- El $valor-p$ es: $`r t_value`$
 
 
+##### **K) ¿$\hat{\beta_0}$ proporciona alguna información relevante sobre el tiempo de “inicio” de una llamada de servicio?**
 
-```{r}
-
-
-```
-
-### Inciso k:
-
-¿𝛽̂0 proporciona alguna información relevante sobre el tiempo de “inicio” de una llamada de servicio?
+- En este caso, no tiene lógica tener una llamada de servicio si no hay equipos que requieran mantenimiento. Como se indicó anteriormente, esto no tiene una interpretación práctica.
 
 
-```{r}
-
-
-```
-
-### Inciso l:
-
-Calcula el intervalo al 90% de confianza para el tiempo medio de servicio en solicitudes en las que se pide dar servicio a seis equipos. Interpreta tu intervalo de confianza. 
+##### **L) Calcula el intervalo al 90% de confianza para el tiempo medio de servicio en solicitudes en las que se pide dar servicio a seis equipos. Interpreta tu intervalo de confianza.** 
 
 
 ```{r}
 
+tiempo_estimado_6 <- coef(modelo)["(Intercept)"] + coef(modelo)["Equipos"] * 6
+
+n <- nrow(data_02)
+x_bar <- mean(data_02$Equipos)
+sigma_gorro <- sqrt(sum(residuals(modelo)^2) / (n - 2))
+SE <- sigma_gorro * sqrt(1/n + (6 - x_bar)^2 / sum((data_02$Equipos - x_bar)^2))
+
+t_test <- qt(0.95, df = n - 2)
+
+margen_error <- t_test * SE
+IC_inferior <- tiempo_estimado_6 - margen_error
+IC_superior <- tiempo_estimado_6 + margen_error
 
 ```
 
-### Inciso m:
+- El intervalo de confianza es: ($`r IC_inferior`$,$`r IC_superior`$)
 
-Calcula el intervalo de confianza para la próxima solicitud de servicio que involucre seis equipos. Compara este intervalo con el del inciso anterior, ¿cuál debería ser mayor y por qué?
+
+##### **M) Calcula el intervalo de confianza para la próxima solicitud de servicio que involucre seis equipos. Compara este intervalo con el del inciso anterior, ¿cuál debería ser mayor y por qué?**
 
 
 ```{r}
 
+tiempo_estimado_6 <- coef(modelo)["(Intercept)"] + coef(modelo)["Equipos"] * 6
+
+SE_prediccion <- sigma_gorro * sqrt(1 + 1/n + (6 - x_bar)^2 / sum((data_02$Equipos - x_bar)^2))
+t_test <- qt(0.95, df = n - 2)
+
+margen_error_prediccion <- t_test * SE_prediccion
+IC_inferior_prediccion <- tiempo_estimado_6 - margen_error_prediccion
+IC_superior_prediccion <- tiempo_estimado_6 + margen_error_prediccion
 
 ```
 
-### Inciso n:
+- El intervalo de confianza es: ($`r IC_inferior_prediccion`$,$`r IC_superior_prediccion`$)
 
-La administración desea estimar el tiempo esperado de servicio por equipo en solicitudes para seis equipos. Obtén el intervalo de confianza apropiado transformando el intervalo de confianza del inciso (l). Interpreta el intervalo de confianza calculado.
+- El segundo intervalo debería de tener un rango mayor ya que incluye el factor predicción.
 
+
+##### **N) La administración desea estimar el tiempo esperado de servicio por equipo en solicitudes para seis equipos. Obtén el intervalo de confianza apropiado transformando el intervalo de confianza del inciso (l). Interpreta el intervalo de confianza calculado.**
+
+- Dividiendo entre 6 el intervalo de confianza pasado, obtenemos $[14.55, 15.33]$. Este es el tiempo medio de servicio por equipo en minutos.
+
+
+#####  **O) Determina los límites de la banda del 90% de confianza para la línea de regresión cuando \( X_h = 6 \). La banda en este punto, ¿es más ancha que los intervalos de confianza obtenidos en el inciso (l)? ¿Debería serlo?**
 
 ```{r}
 
+y_gorro <- predict(modelo, newdata = data.frame(Equipos = 6), interval = "confidence", level = 0.90)[, "fit"]
+
+n <- nrow(data_02)
+x_bar <- mean(data_02$Equipos)
+S_xx <- sum((data_02$Equipos - x_bar)^2)
+sigma_hat <- sqrt(sum(residuals(modelo)^2) / (n - 2))
+
+SE_y_gorro <- sigma_hat * sqrt(1 + 1/n + (6 - x_bar)^2 / S_xx)
+
+t_critico <- qt(0.95, df = n - 2)
+
+margen_error_banda <- t_critico * SE_y_gorro
+banda_inf <- y_gorro - margen_error_banda
+banda_sup <- y_gorro + margen_error_banda
 
 ```
+- La banda de confianza es: ($`r banda_inf`$,$`r banda_sup`$)
 
-### Inciso o:
-
-Determina los límites de la banda del 90% de confianza para la línea de regresión cuando 𝑋ℎ = 6. La banda en este punto, ¿es más ancha que los intervalos de confianza obtenidos en el inciso (l)? ¿Debería serlo?
-
-
-```{r}
+- Definitivamente es mas ancha. Es lo que esperábamos dado que se tiene en cuenta la incertidumbre adicional en la predicción.
 
 
-```
-
-### Inciso p:
-
-Obtén la tabla ANOVA para el modelo ajustado.
+#####  **P) Obtén la tabla ANOVA para el modelo ajustado.**
 
 
 ```{r}
