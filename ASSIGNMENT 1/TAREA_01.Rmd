@@ -104,6 +104,15 @@ Intepretacion: el IC es el rango de valores dentro del cual se espera que caiga 
 
 ```{r}
 
+t_statistic <- b.1.est / se.b1.est
+
+p_value <- 2 * pt(-abs(t_statistic), df = nrow(data) - 2)
+
+if(p_value < 0.05) {
+  cat("Rechazamos la hipotesis nula. Hay suficiente evidencia para concluir que beta_1 es diferente de 0, indicando una relación lineal significativa.\n")
+} else {
+  cat("No se rechaza la hipotesis nula. No hay suficiente evidencia para concluir que beta_1 es diferente de 0.\n")
+}
 
 ```
 
@@ -113,6 +122,15 @@ Intepretacion: el IC es el rango de valores dentro del cual se espera que caiga 
 
 ```{r}
 
+t_statistic <- b.1.est / se.b1.est
+
+p_value <- pt(t_statistic, df = nrow(data) - 2, lower.tail = FALSE) # para obtener el valor p de una cola hacia la derecha.
+
+if(p_value < 0.05) {
+  cat("Rechazamos la hipótesis nula. Hay suficiente evidencia para concluir que beta_1 es mayor que 0, indicando una tasa de cambio positiva en el número de horas por lote trabajado.\n")
+} else {
+  cat("No se rechaza la hipótesis nula. No hay suficiente evidencia para concluir que beta_1 es mayor que 0.\n")
+}
 
 ```
 
@@ -296,6 +314,7 @@ modelo <- lm(formula = Servicio ~ Equipos, data = data_02)
 summary(modelo)
 
 ```
+
 <br>
 
 ##### **B) Grafica tanto la función de regresión como los datos.**
@@ -334,6 +353,7 @@ Añadiendo al analisis previo, por medio de los otros valores brindados por la r
 
 - La $R^{2}$ nos indica que se logra explicar, en cierta medida, la variabilidad en el tiempo de servicio por la variabilidad en el numero de equipos.
 
+<br>
 
 ##### **D) ¿Cuál es la estimación del tiempo que se tardará un mecánico en dar servicio a 5 equipos?**
 
@@ -561,6 +581,15 @@ if (valor_p_f < 0.05) {
 <br>
 
 ##### **R) ¿En cuánto se reduce, en términos relativos, la variación total al incluir el número de máquinas como variable explicativa al análisis?**
+
+```{r}
+resumen_modelo <- summary(modelo)
+r_cuadrado <- resumen_modelo$r.squared
+reduccion_relativa <- r_cuadrado * 100
+```
+- La reducción relativa en la variación total es del $`r reduccion_relativa`$
+
+- Recordar que:
 
 \[ R^2 = \frac{\text{Variación explicada por el modelo}}{\text{Variación total}} = 1 - \frac{\text{SSE}}{\text{SST}} \]
 

@@ -29,6 +29,26 @@ i.c.2 <- b.1.est + v.c*se.b1.est
 t.est <- b.1.est/se.b1.est
 v.c.2 <- qf(p = 0.95, df1 = 1, df2 = nrow(data)-2)
 
+t_statistic <- b.1.est / se.b1.est
+p_value <- 2 * pt(-abs(t_statistic), df = nrow(data) - 2)
+cat("Estadística t:", t_statistic, "\n")
+cat("Valor p:", p_value, "\n")
+if(p_value < 0.05) {
+  cat("Rechazamos la hipótesis nula. Hay suficiente evidencia para concluir que \\( \\beta_1 \\) es diferente de 0, indicando una relación lineal significativa.\n")
+} else {
+  cat("No se rechaza la hipótesis nula. No hay suficiente evidencia para concluir que \\( \\beta_1 \\) es diferente de 0.\n")
+}
+
+t_statistic <- b.1.est / se.b1.est
+
+p_value <- pt(t_statistic, df = nrow(data) - 2, lower.tail = FALSE) # para obtener el valor p de una cola hacia la derecha.
+
+if(p_value < 0.05) {
+  cat("Rechazamos la hipótesis nula. Hay suficiente evidencia para concluir que beta_1 es mayor que 0, indicando una tasa de cambio positiva en el número de horas por lote trabajado.\n")
+} else {
+  cat("No se rechaza la hipótesis nula. No hay suficiente evidencia para concluir que beta_1 es mayor que 0.\n")
+}
+
 MSE <- sum((data$Num_horas - y.gorro)^2)/(nrow(data)-2)
 se.b0.est <- 
   sqrt(
