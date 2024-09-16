@@ -29,6 +29,41 @@ i.c.2 <- b.1.est + v.c*se.b1.est
 t.est <- b.1.est/se.b1.est
 v.c.2 <- qf(p = 0.95, df1 = 1, df2 = nrow(data)-2)
 
+MSE <- sum((data$Num_horas - y.gorro)^2)/(nrow(data)-2)
+se.b0.est <- 
+  sqrt(
+    MSE * 
+      (
+        1 / nrow(data) + 
+          x.barra^2 / ((sum((data$Tamaños - mean(data$Tamaños))^2)))
+      )
+  )
+v.c <- qt(p = 0.95, df = nrow(data)-2)
+i.c.1 <- b.0.est - v.c*se.b0.est
+i.c.2 <- b.0.est + v.c*se.b0.est
+t.est <- b.0.est / se.b0.est
+
+
+X_h1 <- 65
+X_h2 <- 100
+Y_h1 <- b.0.est + b.1.est * X_h1
+Y_h2 <- b.0.est + b.1.est * X_h2
+n <- nrow(data)
+SSE <- sum((data$Num_horas - (b.0.est + b.1.est * data$Tamaños))^2)
+MSE <- SSE / (n - 2)
+S_xx <- sum((data$Tamaños - x.barra)^2)
+SE_Y_h1 <- sqrt(MSE * (1/n + (X_h1 - x.barra)^2 / S_xx))
+SE_Y_h2 <- sqrt(MSE * (1/n + (X_h2 - x.barra)^2 / S_xx))
+alpha <- 0.10
+t_critical <- qt(1 - alpha/2, df = n - 2)
+IC_Y_h1_lower <- Y_h1 - t_critical * SE_Y_h1
+IC_Y_h1_upper <- Y_h1 + t_critical * SE_Y_h1
+IC_Y_h2_lower <- Y_h2 - t_critical * SE_Y_h2
+IC_Y_h2_upper <- Y_h2 + t_critical * SE_Y_h2
+cat("Intervalo de confianza al 90% para X_h = 65: [", IC_Y_h1_lower, ", ", IC_Y_h1_upper, "]\n")
+cat("Intervalo de confianza al 90% para X_h = 100: [", IC_Y_h2_lower, ", ", IC_Y_h2_upper, "]\n")
+
+
 ### Ejercicio 02
 data_02 <- read.table(file = "datos_ej_2.txt", header = FALSE, sep = "|", strip.white = TRUE)
 names(data_02) <- c("Servicio", "Equipos")
