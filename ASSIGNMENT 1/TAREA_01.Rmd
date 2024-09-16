@@ -7,13 +7,21 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(kableExtra)
 ```
 
-## R Markdown
+## EJERCICIO 01
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+La Compañía Toluca fabrica equipos de refrigeración. En el pasado, las
+refacciones de los equipos se han fabricado periódicamente en lotes de
+diferentes tamaños. Se implementó un programa de mejora para lo cual los
+directivos requieren conocer el tamaño óptimo de los lotes. Para determinar el
+tamaño de los lotes se consideró la relación entre el tamaño de los lotes y la
+cantidad de horas requeridas para producir el lote. Se levantaron datos de 25
+corridas de producción recientes sobre el número de horas que se requirieron
+(y) para producir lotes de diferentes tamaños (x). Suponiendo que el modelo
+de regresión lineal simple es apropiado.
 
 ```{r cars}
 summary(cars)
