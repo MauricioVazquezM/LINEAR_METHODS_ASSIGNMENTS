@@ -1,4 +1,8 @@
-# LINEAR_METHODS_ASSIGNMENTS
+# LINEAR METHODS ASSIGNMENTS COURSE
+
+<p align="center">
+  <img width="700" height="500" src="https://media.geeksforgeeks.org/wp-content/uploads/20231129130431/11111111.png">
+</p>
 
 <br>
 
