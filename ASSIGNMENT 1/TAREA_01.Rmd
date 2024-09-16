@@ -23,16 +23,110 @@ corridas de producción recientes sobre el número de horas que se requirieron
 (y) para producir lotes de diferentes tamaños (x). Suponiendo que el modelo
 de regresión lineal simple es apropiado.
 
-```{r cars}
-summary(cars)
+```{r}
+data <- read.table(file = "datos_ej_1.txt", header = FALSE, sep = "|", strip.white = TRUE)
+names(data) <- c("Tamaños", "Num_horas")
+head(data)
+
 ```
 
-## Including Plots
+### Inciso a:
 
-You can also embed plots, for example:
+Encuentra los estimadores de mínimos cuadrados para los coeficientes de la regresión.
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r}
+
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+### Inciso b:
+
+Calcula el valor estimado de número de horas promedio que se requerirán cuando el lote es de tamaño 65.
+
+
+```{r}
+
+
+```
+
+
+### Inciso c:
+
+Estima el intervalo para 𝛽1 al 95% de confianza. ¿Qué se puede interpretar de este intervalo?
+
+
+```{r}
+
+
+```
+
+### Inciso d:
+
+¿Podríamos afirmar que la relación lineal es significativa? Realiza una prueba de hipótesis (significancia del 5%) para 𝛽1 que te permita contestar esta pregunta.
+
+
+```{r}
+
+
+```
+
+### Inciso e:
+
+Supongamos ahora que se desea probar si la tasa de cambio en el número de horas por lote trabajado es positiva, ¿cómo establecerías la prueba de hipótesis? ¿Qué resultado te arroja?
+
+
+```{r}
+
+
+```
+
+### Inciso f:
+
+Construye un intervalo de confianza al 90% para 𝛽0.
+
+
+```{r}
+
+
+```
+
+### Inciso g:
+
+Construye un intervalo de confianza al 90% para 𝑌̂ℎ si 𝑋ℎ = 65 y 𝑋ℎ = 100.
+
+
+```{r}
+
+
+```
+
+### Inciso h:
+
+Supón que la empresa desea pronosticar el valor del número de horas que tomará producir un nuevo lote de 65 refacciones. Calcula el intervalo de confianza al 90% para el número de horas que tomará elaborar este lote. ¿Cuál es el intervalo de confianza para un nuevo lote de 100 piezas?.
+
+
+```{r}
+
+
+```
+
+### Inciso i:
+
+Realiza una prueba 𝐹 para determinar si 𝛽 = 0 con un 95% de confianza.
+
+
+```{r}
+
+
+```
+
+### Inciso j:
+
+Obtén la 𝑅2 de la regresión y proporciona una interpretación breve de este valor.
+
+
+```{r}
+
+
+```
+

@@ -12,3 +12,4 @@ names(data) <- c("Tamaños", "Num_horas")
 head(data)
 
 
+
