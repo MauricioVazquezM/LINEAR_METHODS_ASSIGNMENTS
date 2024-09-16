@@ -23,6 +23,9 @@ corridas de producción recientes sobre el número de horas que se requirieron
 (y) para producir lotes de diferentes tamaños (x). Suponiendo que el modelo
 de regresión lineal simple es apropiado.
 
+
+### Lectura de datos:
+
 ```{r}
 data <- read.table(file = "datos_ej_1.txt", header = FALSE, sep = "|", strip.white = TRUE)
 names(data) <- c("Tamaños", "Num_horas")
@@ -130,3 +133,223 @@ Obtén la 𝑅2 de la regresión y proporciona una interpretación breve de este
 
 ```
 
+## EJERCICIO 02
+
+Una empresa que se dedica a la venta y mantenimiento de equipo de oficina
+proporciona los datos que se proporcionan, relativos a 45 llamadas de
+mantenimiento por parte de sus clientes. Los datos incluyen el número de
+equipos (variable explicativa) a los que se les dio mantenimiento en cada
+servicio y el tiempo (en minutos) que se tardó el personal de mantenimiento en
+el servicio (variable dependiente). Suponiendo que el modelo de regresión
+lineal simple de primer orden es válido:
+
+### Lectura de datos:
+
+```{r}
+data_02 <- read.table(file = "datos_ej_2.txt", header = FALSE, sep = "|", strip.white = TRUE)
+names(data_02) <- c("Servicio", "Equipos")
+head(data_02)
+
+```
+
+### Inciso a:
+
+Estima la función de regresión.
+
+
+```{r}
+
+
+```
+
+### Inciso b:
+
+Grafica tanto la función de regresión como los datos.
+
+
+```{r}
+
+
+```
+
+### Inciso c:
+
+Proporciona una interpretación de los parámetros de regresión.
+
+
+```{r}
+
+
+```
+
+### Inciso d:
+
+¿Cuál es la estimación del tiempo que se tardará un mecánico en dar servicio a 5 equipos?
+
+
+```{r}
+
+
+```
+
+### Inciso e:
+
+Obtén los residuales y la suma del cuadrado de los residuales, ¿cuál es la relación entre esta suma del cuadrado de los residuales y la cantidad 𝑄 = ∑ (𝑌𝑖 − 𝛽0 − 𝛽1𝑋𝑖)2𝑛i=1 ?
+
+
+```{r}
+
+
+```
+
+### Inciso f:
+
+Obtén los estimadores puntuales para 𝜎2 y 𝜎. ¿En qué unidades se encuentra expresado 𝜎?
+
+
+```{r}
+
+
+```
+
+### Inciso g:
+
+Estima el cambio en el tiempo medio de servicio cuando el número de copiadoras incrementa en 1. Usa un intervalo de confianza al 90%. Interpreta tu intervalo de confianza.
+
+
+```{r}
+
+
+```
+
+### Inciso h:
+
+Realiza una prueba t con 𝛼 = 0.1 para determinar si existe una relación lineal entre X y Y. Señala las hipótesis, la regla de decisión y tu conclusión. ¿Cuál es el valor-p de la prueba?
+
+
+```{r}
+
+
+```
+
+### Inciso i:
+
+Los resultados obtenidos en g) y h), ¿son consistentes?
+
+
+```{r}
+
+
+```
+
+### Inciso j:
+
+El fabricante sugiere que el tiempo medio requerido no debería incrementarse en más de 14 minutos por cada copiadora adicional. Realiza una prueba
+adicional para determinar si este estándar está siendo cumplido por la empresa. Controla para una 𝛼 = 0.05, señala las hipótesis, la regla de decisión y tu conclusión. ¿Cuál es el valor-p de la prueba?
+
+
+
+```{r}
+
+
+```
+
+### Inciso k:
+
+¿𝛽̂0 proporciona alguna información relevante sobre el tiempo de “inicio” de una llamada de servicio?
+
+
+```{r}
+
+
+```
+
+### Inciso l:
+
+Calcula el intervalo al 90% de confianza para el tiempo medio de servicio en solicitudes en las que se pide dar servicio a seis equipos. Interpreta tu intervalo de confianza. 
+
+
+```{r}
+
+
+```
+
+### Inciso m:
+
+Calcula el intervalo de confianza para la próxima solicitud de servicio que involucre seis equipos. Compara este intervalo con el del inciso anterior, ¿cuál debería ser mayor y por qué?
+
+
+```{r}
+
+
+```
+
+### Inciso n:
+
+La administración desea estimar el tiempo esperado de servicio por equipo en solicitudes para seis equipos. Obtén el intervalo de confianza apropiado transformando el intervalo de confianza del inciso (l). Interpreta el intervalo de confianza calculado.
+
+
+```{r}
+
+
+```
+
+### Inciso o:
+
+Determina los límites de la banda del 90% de confianza para la línea de regresión cuando 𝑋ℎ = 6. La banda en este punto, ¿es más ancha que los intervalos de confianza obtenidos en el inciso (l)? ¿Debería serlo?
+
+
+```{r}
+
+
+```
+
+### Inciso p:
+
+Obtén la tabla ANOVA para el modelo ajustado.
+
+
+```{r}
+
+
+```
+
+### Inciso q:
+
+Realiza una prueba F para determinar si existe o no una relación lineal entre el tiempo empleado y el número de máquinas a las que se realizó el servicio. Usa un 𝛼 = 0.10. Señala las hipótesis, la regla de decisión y tu conclusión.
+
+
+```{r}
+
+
+```
+
+### Inciso r:
+
+¿En cuánto se reduce, en términos relativos, la variación total al incluir el número de máquinas como variable explicativa al análisis?
+
+
+```{r}
+
+
+```
+
+### Inciso s:
+
+Calcula 𝑟, ¿cuál debería ser el signo de 𝑟?
+
+
+```{r}
+
+
+```
+
+### Inciso t:
+
+Grafica los residuales de la regresión contra 𝑌̂ y contra 𝑋.
+
+
+```{r}
+
+
+```
