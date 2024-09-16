@@ -143,6 +143,7 @@ servicio y el tiempo (en minutos) que se tardó el personal de mantenimiento en
 el servicio (variable dependiente). Suponiendo que el modelo de regresión
 lineal simple de primer orden es válido:
 
+
 ### Lectura de datos:
 
 ```{r}
@@ -152,10 +153,8 @@ head(data_02)
 
 ```
 
-### Inciso a:
 
-Estima la función de regresión.
-
+### **A) Estima la función de regresión.**
 
 ```{r}
 
@@ -164,10 +163,7 @@ summary(modelo)
 
 ```
 
-### Inciso b:
-
-Grafica tanto la función de regresión como los datos.
-
+### **B) Grafica tanto la función de regresión como los datos.**
 
 ```{r}
 
@@ -179,70 +175,119 @@ ggplot(data_02, aes(x = Equipos, y = Servicio)) +
 
 ```
 
-### Inciso c:
 
-Proporciona una interpretación de los parámetros de regresión.
+### **C) Proporciona una interpretación de los parámetros de regresión.**
 
+Obtuvimos que los estimadores de los coeficientes de regresión son:
+
+- $\hat{\beta}_0 = `r modelo$coefficients[1]`$
+
+El término constante representaría el valor estimado del tiempo de servicio cuando el número de equipos es cero. Sin embargo, dado que el valor de $\beta_0$ es menor a cero, en este caso no tiene una interpretación práctica.
+
+Por otro lado, obtuvimos que $\beta_1$ es:
+ 
+- $\hat{\beta}_1 = `r modelo$coefficients[2]`$
+
+Esto indica que por cada unidad adicional, el numero de equipos a los que se les dio mantenimiento, el tiempo de servicio aumenta en 15.04 minutos.
+
+Añadiendo al analisis previo, por medio de los otros valores brindados por la regresión podemos concluir que:
+
+- Dado que el valor $p < 2.2e^{-16}$, la relación encontrada entre el número de equipos y el tiempo de servicio es significativa.
+
+- La prueba $F$, nos indica que el modelo en su conjunto es significativo.
+
+- La $R^{2}$ nos indica que se logra explicar, en cierta medida, la variabilidad en el tiempo de servicio por la variabilidad en el numero de equipos.
+
+
+### **D) ¿Cuál es la estimación del tiempo que se tardará un mecánico en dar servicio a 5 equipos?**
+
+- $Aproximadamente: 74.5958 min$
+
+
+### **E) Obtén los residuales y la suma del cuadrado de los residuales, ¿cuál es la relación entre esta suma del cuadrado de los residuales y la cantidad $Q=\sum_{i=1}^{n} (Y_i - \beta_0 - \beta_1 X_i)^2$ ?**
 
 ```{r}
+
+residuales <- residuals(modelo)
+SSE <- sum(residuales^2)
+
+residuales_str <- toString(residuales)
+SSE_str <- toString(SSE)
+
+```
+
+- Residuales: `` `r residuales_str` ``
+- SSE:`` `r SSE_str` ``
+
+Q es la suma de los errores exactos al cuadrado, mientras que la suma del cuadrado de los residuales es la suma del estimador epsilon al cuadrado.
+- Errores exactos vs. estimacion
+
+
+### **F) Obtén los estimadores puntuales para $\sigma^2$ y $\sigma$. ¿En qué unidades se encuentra expresado $\sigma$?**
+
+```{r}
+
+n <- length(residuales)
+
+sigmac_gorro <- sum(residuales^2) / (n - 2)
+sigma_gorro <- sqrt(sigmac_gorro)
 
 
 ```
 
-### Inciso d:
+- $\hat{\sigma}^2 = \frac{SSR}{n - 2}$ : con un valor de $`r sigmac_gorro`$ y sus unidades son minutos al cuadrado.
 
-¿Cuál es la estimación del tiempo que se tardará un mecánico en dar servicio a 5 equipos?
-
-
-```{r}
+- $\hat{\sigma} = \sqrt{\hat{\sigma}^2}$ : con un valor de $`r sigma_gorro`$ y sus unidades son minutos.
 
 
-```
-
-### Inciso e:
-
-Obtén los residuales y la suma del cuadrado de los residuales, ¿cuál es la relación entre esta suma del cuadrado de los residuales y la cantidad 𝑄 = ∑ (𝑌𝑖 − 𝛽0 − 𝛽1𝑋𝑖)2𝑛i=1 ?
-
+### **G) Estima el cambio en el tiempo medio de servicio cuando el número de copiadoras incrementa en 1. Usa un intervalo de confianza al 90%. Interpreta tu intervalo de confianza.**
 
 ```{r}
 
+residuales <- residuals(modelo)
+SSE <- sum(residuales^2)
+
+x.datos <- data_02$Equipos
+x.barra <- mean(data_02$Equipos)
+abajo <- sum((x.datos - x.barra)^2)
+
+beta.1.gorro <- sum((data_02$Equipos - x.barra)*data_02$Servicio) / abajo
+alpha <- 1 - 0.90
+p <- 1-(alpha/2)
+
+vc <- qt(p = p, df = n - 2)
+y.gorro.dt <- predict(object = modelo)
+
+mse <- SSE/n
+
+sigma.2.gorro.b1 <- mse / abajo
+
+ls <- beta.1.gorro + vc*sqrt(mse/abajo)
+li <- beta.1.gorro - vc*sqrt(mse/abajo)
 
 ```
+- Límite inferior: $`r li`$
+- Límite inferior: $`r ls`$
+- Intervalo = ($`r li`$, $`r ls`$)
 
-### Inciso f:
 
-Obtén los estimadores puntuales para 𝜎2 y 𝜎. ¿En qué unidades se encuentra expresado 𝜎?
-
+### **H) Realiza una prueba t con $\alpha = 0.1$ para determinar si existe una relación lineal entre \( X \) y \( Y \). Señala las hipótesis, la regla de decisión y tu conclusión. ¿Cuál es el $valor-p$ de la prueba?**
 
 ```{r}
 
-
-```
-
-### Inciso g:
-
-Estima el cambio en el tiempo medio de servicio cuando el número de copiadoras incrementa en 1. Usa un intervalo de confianza al 90%. Interpreta tu intervalo de confianza.
-
-
-```{r}
+summary_modelo <- summary(modelo)
+valor_p <- summary_modelo$coefficients["Equipos", "Pr(>|t|)"]
 
 
 ```
+- El p-value es de: $`r valor_p`$
+- La regla de decisión es que si el valor $p < 0.05$ entonces tenemos que nuestro análisis es significativo y rechazamos $H_0$ a favor de $H_1$. 
+- Con $H_0$ : $\beta_1$ = 0 vs. $H_0$ : $\beta_1$ $\neq$ 0.
 
-### Inciso h:
-
-Realiza una prueba t con 𝛼 = 0.1 para determinar si existe una relación lineal entre X y Y. Señala las hipótesis, la regla de decisión y tu conclusión. ¿Cuál es el valor-p de la prueba?
-
-
-```{r}
+En conclusion, hay evidencia para rechazar la hipotesis nula y aceptamos que hay relación lineal entre equipos y servicio.
 
 
-```
-
-### Inciso i:
-
-Los resultados obtenidos en g) y h), ¿son consistentes?
-
+### **I) Los resultados obtenidos en G) y H), ¿son consistentes?
 
 ```{r}
 
