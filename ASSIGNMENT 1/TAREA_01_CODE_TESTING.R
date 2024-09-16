@@ -9,6 +9,13 @@ data <- read.table(file = "datos_ej_1.txt", header = FALSE, sep = "|", strip.whi
 names(data) <- c("Tamaños", "Num_horas")
 head(data)
 
+x.barra <- mean(data$Tamaños)
+y.barra <- mean(data$Num_horas)
+data$dif.x <- data$Tamaños - x.barra
+data$dif.y <- data$Num_horas - y.barra
+data$dif.x_x_dif.y <- data$dif.x*data$dif.y
+b.1.est <- sum(data$dif.x_x_dif.y)/sum((data$dif.x)^2)
+b.0.est <- y.barra - b.1.est * x.barra
 
 ### Ejercicio 02
 data_02 <- read.table(file = "datos_ej_2.txt", header = FALSE, sep = "|", strip.white = TRUE)

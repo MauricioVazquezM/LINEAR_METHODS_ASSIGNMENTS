@@ -42,8 +42,21 @@ head(data)
 
 ```{r}
 
+x.barra <- mean(data$Tamaños)
+y.barra <- mean(data$Num_horas)
+data$dif.x <- data$Tamaños - x.barra
+data$dif.y <- data$Num_horas - y.barra
+data$dif.x_x_dif.y <- data$dif.x*data$dif.y
+b.1.est <- sum(data$dif.x_x_dif.y)/sum((data$dif.x)^2)
+b.0.est <- y.barra - b.1.est * x.barra
 
 ```
+
+Obtuvimos que los estimadores de mínimos cuadrados para los coeficientes de la regresión son:
+
+- $\beta_0 = `r b.0.est`$
+
+- $\beta_1 = `r b.1.est`$
 
 <br>
 
