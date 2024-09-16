@@ -63,6 +63,40 @@ IC_Y_h2_upper <- Y_h2 + t_critical * SE_Y_h2
 cat("Intervalo de confianza al 90% para X_h = 65: [", IC_Y_h1_lower, ", ", IC_Y_h1_upper, "]\n")
 cat("Intervalo de confianza al 90% para X_h = 100: [", IC_Y_h2_lower, ", ", IC_Y_h2_upper, "]\n")
 
+X_h1 <- 65
+X_h2 <- 100
+Y_h1 <- b.0.est + b.1.est * X_h1
+Y_h2 <- b.0.est + b.1.est * X_h2
+n <- nrow(data)
+SSE <- sum((data$Num_horas - (b.0.est + b.1.est * data$Tamaños))^2)
+MSE <- SSE / (n - 2)
+S_xx <- sum((data$Tamaños - x.barra)^2)
+SE_Y_h1_pred <- sqrt(MSE * (1 + 1/n + (X_h1 - x.barra)^2 / S_xx))
+SE_Y_h2_pred <- sqrt(MSE * (1 + 1/n + (X_h2 - x.barra)^2 / S_xx))
+alpha <- 0.10
+t_critical <- qt(1 - alpha/2, df = n - 2)
+IP_Y_h1_lower <- Y_h1 - t_critical * SE_Y_h1_pred
+IP_Y_h1_upper <- Y_h1 + t_critical * SE_Y_h1_pred
+IP_Y_h2_lower <- Y_h2 - t_critical * SE_Y_h2_pred
+IP_Y_h2_upper <- Y_h2 + t_critical * SE_Y_h2_pred
+cat("Intervalo de predicción al 90% para un nuevo lote de 65 piezas: [", IP_Y_h1_lower, ", ", IP_Y_h1_upper, "]\n")
+cat("Intervalo de predicción al 90% para un nuevo lote de 100 piezas: [", IP_Y_h2_lower, ", ", IP_Y_h2_upper, "]\n")
+
+modelo <- lm(Num_horas ~ Tamaños, data = data)
+summary_modelo <- summary(modelo)
+
+F_statistic <- summary_modelo$fstatistic[1]
+p_value <- summary_modelo$coefficients["Tamaños", "Pr(>|t|)"]
+
+cat("Estadística F:", F_statistic, "\n")
+cat("Valor p:", p_value, "\n")
+if(p_value < 0.05) {
+  cat("Rechazamos la hipótesis nula. Hay suficiente evidencia para concluir que \\( \\beta_1 \\) es diferente de 0.\n")
+} else {
+  cat("No se rechaza la hipótesis nula. No hay suficiente evidencia para concluir que \\( \\beta_1 \\) es diferente de 0.\n")
+}
+
+R2 <- summary_modelo$r.squared
 
 ### Ejercicio 02
 data_02 <- read.table(file = "datos_ej_2.txt", header = FALSE, sep = "|", strip.white = TRUE)
