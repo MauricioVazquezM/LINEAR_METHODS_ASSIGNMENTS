@@ -11,7 +11,9 @@ library(ggplot2)
 library(kableExtra)
 ```
 
-## EJERCICIO 01
+<br>
+
+## **EJERCICIO 01**
 
 La Compañía Toluca fabrica equipos de refrigeración. En el pasado, las
 refacciones de los equipos se han fabricado periódicamente en lotes de
@@ -23,8 +25,9 @@ corridas de producción recientes sobre el número de horas que se requirieron
 (y) para producir lotes de diferentes tamaños (x). Suponiendo que el modelo
 de regresión lineal simple es apropiado.
 
+<br>
 
-### Lectura de datos:
+##### **Lectura de datos:**
 
 ```{r}
 data <- read.table(file = "datos_ej_1.txt", header = FALSE, sep = "|", strip.white = TRUE, skip = 1)
@@ -33,49 +36,36 @@ head(data)
 
 ```
 
-### Inciso a:
+<br>
 
-Encuentra los estimadores de mínimos cuadrados para los coeficientes de la regresión.
-
-```{r}
-
-
-```
-
-### Inciso b:
-
-Calcula el valor estimado de número de horas promedio que se requerirán cuando el lote es de tamaño 65.
-
+##### **A) Encuentra los estimadores de mínimos cuadrados para los coeficientes de la regresión.**
 
 ```{r}
 
 
 ```
 
+<br>
 
-### Inciso c:
-
-Estima el intervalo para 𝛽1 al 95% de confianza. ¿Qué se puede interpretar de este intervalo?
-
+##### **B) Calcula el valor estimado de número de horas promedio que se requerirán cuando el lote es de tamaño 65.**
 
 ```{r}
 
 
 ```
 
-### Inciso d:
+<br>
 
-¿Podríamos afirmar que la relación lineal es significativa? Realiza una prueba de hipótesis (significancia del 5%) para 𝛽1 que te permita contestar esta pregunta.
-
+##### **C) Estima el intervalo para \(\beta_1\) al 95% de confianza. ¿Qué se puede interpretar de este intervalo?**
 
 ```{r}
 
 
 ```
 
-### Inciso e:
+<br>
 
-Supongamos ahora que se desea probar si la tasa de cambio en el número de horas por lote trabajado es positiva, ¿cómo establecerías la prueba de hipótesis? ¿Qué resultado te arroja?
+##### **D) ¿Podríamos afirmar que la relación lineal es significativa? Realiza una prueba de hipótesis (significancia del 5%) para \(\beta_1\) que te permita contestar esta pregunta.**
 
 
 ```{r}
@@ -83,9 +73,27 @@ Supongamos ahora que se desea probar si la tasa de cambio en el número de horas
 
 ```
 
-### Inciso f:
+<br>
 
-Construye un intervalo de confianza al 90% para 𝛽0.
+##### **E) Supongamos ahora que se desea probar si la tasa de cambio en el número de horas por lote trabajado es positiva, ¿cómo establecerías la prueba de hipótesis? ¿Qué resultado te arroja?**
+
+```{r}
+
+
+```
+
+<br>
+
+##### **F) Construye un intervalo de confianza al 90% para \(\beta_0\).**
+
+```{r}
+
+
+```
+
+<br>
+
+##### **G) Construye un intervalo de confianza al 90% para \(\hat{Y}_h\) si \(X_h = 65\) y \(X_h = 100\)..**
 
 
 ```{r}
@@ -93,40 +101,27 @@ Construye un intervalo de confianza al 90% para 𝛽0.
 
 ```
 
-### Inciso g:
+<br>
 
-Construye un intervalo de confianza al 90% para 𝑌̂ℎ si 𝑋ℎ = 65 y 𝑋ℎ = 100.
-
-
-```{r}
-
-
-```
-
-### Inciso h:
-
-Supón que la empresa desea pronosticar el valor del número de horas que tomará producir un nuevo lote de 65 refacciones. Calcula el intervalo de confianza al 90% para el número de horas que tomará elaborar este lote. ¿Cuál es el intervalo de confianza para un nuevo lote de 100 piezas?.
-
+##### **H) Supón que la empresa desea pronosticar el valor del número de horas que tomará producir un nuevo lote de 65 refacciones. Calcula el intervalo de confianza al 90% para el número de horas que tomará elaborar este lote. ¿Cuál es el intervalo de confianza para un nuevo lote de 100 piezas?.**
 
 ```{r}
 
 
 ```
 
-### Inciso i:
+<br>
 
-Realiza una prueba 𝐹 para determinar si 𝛽 = 0 con un 95% de confianza.
-
+##### **I) Realiza una prueba \( F \) para determinar si \(\beta = 0\) con un 95% de confianza..**
 
 ```{r}
 
 
 ```
 
-### Inciso j:
+<br>
 
-Obtén la 𝑅2 de la regresión y proporciona una interpretación breve de este valor.
-
+##### **J) Obtén la \( R^2 \) de la regresión y proporciona una interpretación breve de este valor.**
 
 ```{r}
 
