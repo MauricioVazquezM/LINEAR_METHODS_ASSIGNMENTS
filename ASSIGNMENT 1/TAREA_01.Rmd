@@ -64,8 +64,14 @@ Obtuvimos que los estimadores de mínimos cuadrados para los coeficientes de la 
 
 ```{r}
 
+y_hat <- b.0.est + b.1.est*65
 
 ```
+
+Obtuvimos que el valor estimado de número de horas promedio que se requerirán cuando el lote es de tamaño 65 es:
+
+- $\hat{y} = `r y_hat`$
+
 
 <br>
 
@@ -73,8 +79,23 @@ Obtuvimos que los estimadores de mínimos cuadrados para los coeficientes de la 
 
 ```{r}
 
+y.gorro <- b.0.est + b.1.est*data$Tamaños
+
+se.b1.est <- 
+  sqrt(sum(((data$Num_horas - y.gorro)^2)/(nrow(data)-2))) / 
+  sqrt((sum((data$Tamaños - mean(data$Tamaños))^2)))
+
+v.c <- qt(p = 0.975, df = nrow(data)-2)
+i.c.1 <- b.1.est - v.c*se.b1.est
+i.c.2 <- b.1.est + v.c*se.b1.est
 
 ```
+
+El intervalo de confianza para \(\beta_1\) al 95% de confianza es : 
+
+- $IC = (`r i.c.1`, `r i.c.2`)$
+
+Intepretacion: el IC es el rango de valores dentro del cual se espera que caiga \(\beta_1\) de la población con un 95% de confianza. En otras palabras, si se repitiera el muestreo y el cálculo del intervalo muchas veces, aproximadamente el 95% de esos intervalos de confianza incluirían el valor real de \(\beta_1\).
 
 <br>
 

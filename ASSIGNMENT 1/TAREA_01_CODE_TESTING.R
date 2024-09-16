@@ -17,6 +17,18 @@ data$dif.x_x_dif.y <- data$dif.x*data$dif.y
 b.1.est <- sum(data$dif.x_x_dif.y)/sum((data$dif.x)^2)
 b.0.est <- y.barra - b.1.est * x.barra
 
+y_hat <- b.0.est + b.1.est*65
+
+y.gorro <- b.0.est + b.1.est*data$Tamaños
+se.b1.est <- 
+  sqrt(sum(((data$Num_horas - y.gorro)^2)/(nrow(data)-2))) / 
+  sqrt((sum((data$Tamaños - mean(data$Tamaños))^2)))
+v.c <- qt(p = 0.975, df = nrow(data)-2)
+i.c.1 <- b.1.est - v.c*se.b1.est
+i.c.2 <- b.1.est + v.c*se.b1.est
+t.est <- b.1.est/se.b1.est
+v.c.2 <- qf(p = 0.95, df1 = 1, df2 = nrow(data)-2)
+
 ### Ejercicio 02
 data_02 <- read.table(file = "datos_ej_2.txt", header = FALSE, sep = "|", strip.white = TRUE)
 names(data_02) <- c("Servicio", "Equipos")
