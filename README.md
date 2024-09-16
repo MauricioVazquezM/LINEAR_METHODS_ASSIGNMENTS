@@ -32,14 +32,16 @@ Where:
 1. ***Simple Linear Regression:*** Relationship between two variables. For example, predicting the price of a house $Y$ based on its size in square meters $X$:
 
 $$
-Price = \beta_0 + \beta_1*Size + \epsilon
+\text{Price} = \beta_0 + \beta_1 \times \text{Size} + \epsilon
 $$
+
 
 2. ***Multiple Linear Regression:*** Relationship between a dependent variable and multiple independent variables. For example, predicting the price of a house based on its size, number of rooms, and age of the house:
 
 $$
-Price = \beta_0 + \beta_1*Size + \beta_2*Rooms + \beta_3*Age + \epsilon
+\text{Price} = \beta_0 + \beta_1 \times \text{Size} + \beta_2 \times \text{Rooms} + \beta_3 \times \text{Age} + \epsilon
 $$
+
 
 3. ***Analysis of Variance (ANOVA):*** A type of linear model used to compare means between different groups. Although it doesn't have an explicit formula, it can be considered an extension of linear regression to analyze differences between groups.
 
