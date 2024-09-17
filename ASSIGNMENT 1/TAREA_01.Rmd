@@ -639,3 +639,35 @@ ggplot(data_02, aes(x = Equipos, y = residuales)) +
        y = "Residuales")
 
 ```
+
+<br>
+
+## **EJERCICIO 03**
+
+<br>
+
+##### **- Obtén el intervalo al \( 100 \times \left(1 - \frac{\alpha}{2}\right) \)% de confianza para \(\beta_1\).**
+
+- ***Revisar PDF anexo***
+
+<br>
+
+
+## **EJERCICIO 04**
+
+<br>
+
+##### **Demuestra que, para el caso de la regresión lineal simple, la prueba \( t \) y la prueba \( F \) son equivalentes.**
+
+- ***Revisar PDF anexo***
+
+<br>
+
+## **EJERCICIO 05**
+
+<br>
+
+##### **Demuestra que, para el modelo de regresión lineal simple, \( r_{XY} = \sqrt{R^2} \). Sugerencia: primero demuestra que \( \text{SSE} = \text{SST} - \beta_1 \sum (X_i - \bar{X})^2 \).**
+
+- ***Revisar PDF anexo***
+
