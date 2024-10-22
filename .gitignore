@@ -140,3 +140,4 @@ common.env
 .html
 *.csv
 *.html
+*.pdf
