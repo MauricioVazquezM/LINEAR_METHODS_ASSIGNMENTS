@@ -45,7 +45,7 @@ colnames(data) <- c("hrs_studied", "prev_scores", "xtr_activities",
 
 ## Objetivo
 
-* El conjunto de datos seleccionado para este proyecto tiene como objetivo proporcionar información sobre la relación entre las variables predictoras y el índice de rendimiento. Se va a utilizar este conjunto de datos para explorar el impacto de las horas de estudio, los puntajes anteriores, las actividades extracurriculares, las horas de sueño y los exámenes de prueba en el rendimiento de los estudiantes. Además, se planea ajustar un modelo lineal simple para analizar el impacto de cada una de estas variables de manera individual en la variable objetivo, con el fin de determinar cuál de ellas explica mejor el rendimiento del estudiante por sí sola y brinda mejores resultados en términos de ajuste y predicción.
+* El conjunto de datos seleccionado para este proyecto tiene como objetivo explorar el impacto de las horas de estudio, los puntajes anteriores, las actividades extracurriculares, las horas de sueño y los exámenes de prueba en el rendimiento de los estudiantes. Se planea ajustar un modelo lineal simple para analizar el impacto de cada una de estas variables de manera individual en la variable objetivo, con el fin de determinar cuál de ellas explica mejor el rendimiento del estudiante por sí sola y brinda mejores resultados en términos de ajuste y predicción.
 
 <br>
 
