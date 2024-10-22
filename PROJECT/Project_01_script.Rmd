@@ -181,11 +181,16 @@ resultados_parte2 %>%
 
 ```
 
-* Observación 1:
-* Observación 2:
-* Observación 3:
-* Observación 4:
-* Observación 5:
+* Observación 1: la mayoría de los estudiantes parece estudiar entre 3 y 7 horas, con algunos extremos que alcanzan hasta 9 horas.
+* Observación 2: los puntajes anteriores muestran una amplia dispersión. La mitad de los estudiantes tiene puntajes superiores a 69, lo que sugiere que algunos estudiantes ya estaban bien preparados.
+* Observación 3: la mayoría de los estudiantes duerme entre 5 y 9 horas, lo que indica una variabilidad notable en los hábitos de sueño.
+* Observación 4: la mayoría de los estudiantes parece practicar de 2 a 7 exámenes, pero algunos practicaron significativamente más (hasta 9).
+* Observación 5: existe una considerable variabilidad en el rendimiento estudiantil. Aunque la mediana es de 55, un grupo notable de estudiantes tiene un rendimiento significativamente más bajo o más alto.
+* Observación 6: no hay valores faltantes en ninguna de las variables.
+
+***Visualización de las variables***
+
+
 
 <br>
 
