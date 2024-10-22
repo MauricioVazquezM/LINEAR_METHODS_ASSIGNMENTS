@@ -34,12 +34,10 @@ univar_analisis <- function(data) {
     pct_missings <- nan_count / total
     
     if (is.numeric(data[[feature]])) {
-      promedio <- mean(data[[feature]], na.rm = TRUE)
-      desv_estandar <- sd(data[[feature]], na.rm = TRUE)
-      varianza <- var(data[[feature]], na.rm = TRUE)
+      promedio <- round(mean(data[[feature]], na.rm = TRUE),2)
+      desv_estandar <- round(sd(data[[feature]], na.rm = TRUE),2)
+      varianza <- round(var(data[[feature]], na.rm = TRUE),2)
       minimo <- min(data[[feature]], na.rm = TRUE)
-      p1 <- quantile(data[[feature]], 0.01, na.rm = TRUE)
-      p5 <- quantile(data[[feature]], 0.05, na.rm = TRUE)
       p10 <- quantile(data[[feature]], 0.10, na.rm = TRUE)
       q1 <- quantile(data[[feature]], 0.25, na.rm = TRUE)
       mediana <- quantile(data[[feature]], 0.50, na.rm = TRUE)
@@ -71,20 +69,16 @@ univar_analisis <- function(data) {
     }
     
     results[[length(results) + 1]] <- list(
+      
       Variable = feature,
-      DataType = data_type,
       Total = total,
       No_Missings = no_missings,
       Missings = nan_count,
       Pct_Missings = pct_missings,
-      Inf_Count = inf_count,
-      Neg_Inf_Count = neg_inf_count,
       Promedio = promedio,
-      Desviacion_Estandar = desv_estandar,
+      Desv_std = desv_estandar,
       Varianza = varianza,
       Minimo = minimo,
-      p1 = p1,
-      p5 = p5,
       p10 = p10,
       q1 = q1,
       Mediana = mediana,
@@ -96,11 +90,15 @@ univar_analisis <- function(data) {
     )
   }
   
-  return(do.call(rbind, lapply(results, as.data.frame)))
+  result_df <- do.call(rbind, lapply(results, as.data.frame))
+  
+  rownames(result_df) <- NULL
+  
+  return(result_df)
+  
 }
 
 # Ejecutar la función de análisis univariante
 resultados <- univar_analisis(data)
 
-# Ver los resultados
-print(resultados)
+

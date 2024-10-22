@@ -21,6 +21,7 @@ library(kableExtra)
 library(FactoMineR)
 library(knitr)
 library(caret)
+library(dplyr)
 ```
 
 ```{r, echo=FALSE}
@@ -59,12 +60,14 @@ head(data) %>%
   kable_styling(latex_options = c("striped", "hold_position"))
 ```
 
-*
-* 
-*
-*
-*
-*
+Como podemos observar, tenemos las siguientes columnas: 
+
+* ***hrs_studied:***
+* ***prev_scores:***
+* ***xtr_activities:***
+* ***sleep_hrs:***
+* ***sample_question:***
+* ***performance_idx:***
 
 <br>
 
@@ -129,7 +132,7 @@ univar_analisis <- function(data) {
       Missings = nan_count,
       Pct_Missings = pct_missings,
       Promedio = promedio,
-      Desv_std = desv_estandar,
+      Desv_Std = desv_estandar,
       Varianza = varianza,
       Minimo = minimo,
       p10 = p10,
@@ -151,13 +154,23 @@ univar_analisis <- function(data) {
   
 }
 
-# Ejecutar la función de análisis univariante
+# Ejecucion de lafuncion
 resultados <- univar_analisis(data)
 
-# Ver los resultados
-resultados %>%
-  kable(caption = "Muestra de los datos", booktabs = TRUE) %>%
+# Separando el analisis
+resultados_parte1 <- resultados[, c("Variable", "Total", "No_Missings", "Missings", "Pct_Missings")]
+
+resultados_parte2 <- resultados[, c("Promedio", "Desv_Std", "Varianza", "Minimo", "p10", "q1", "Mediana", "q3", "p90", "p95", "p99", "Maximo")]
+
+# Ver los resultados en dos partes
+resultados_parte1 %>%
+  kable(caption = "Analisis univariado de los datos pt I", booktabs = TRUE) %>%
   kable_styling(latex_options = c("striped", "hold_position"))
+
+resultados_parte2 %>%
+  kable(caption = "Analisis univariado de los datos pt. II", booktabs = TRUE) %>%
+  kable_styling(latex_options = c("striped", "hold_position"))
+
 ```
 
 <br>
