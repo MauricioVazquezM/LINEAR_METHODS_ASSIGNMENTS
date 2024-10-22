@@ -6,6 +6,21 @@ data <- read.csv("C:/Users/mauva/OneDrive/Documents/ITAM/9no Semestre/METODOS LI
 # Ver las primeras filas del DataFrame
 head(data)
 
+# Nombres originales de las columnas
+colnames(data) <- c("Hours.Studied", "Previous.Scores", "Extracurricular.Activities", 
+                    "Sleep.Hours", "Sample.Question.Papers.Practiced", "Performance.Index")
+
+# Renombrar las columnas (estandarizando los nombres de las columnas)
+colnames(data) <- tolower(colnames(data))  
+colnames(data) <- gsub("\\.", "_", colnames(data))  
+
+# Acortar los nombres de las columnas
+colnames(data) <- c("hrs_studied", "prev_scores", "xtr_activities", 
+                    "sleep_hrs", "sample_questions", "performance_idx")
+
+# Verificar los nuevos nombres
+print(colnames(data))
+
 # Funcion de analisis univariado 
 univar_analisis <- function(data) {
   results <- list()
