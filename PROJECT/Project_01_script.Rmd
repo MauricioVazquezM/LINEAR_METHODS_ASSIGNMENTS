@@ -190,8 +190,6 @@ resultados_parte2 %>%
 
 ***Visualización de las variables***
 
-
-
 <br>
 
 ## Ajuste de un modelo lineal simple
@@ -209,7 +207,19 @@ resultados_parte2 %>%
 <br>
 
 ```{r fig.width=10, fig.height=4.5, echo=FALSE}
-
+ggplot(data = data, aes(x = INCREMENT_CATEGORY, y = PROG_SALDOS_DISP)) + 
+ geom_boxplot(alpha = 0.2) + 
+ geom_violin(alpha = 0.05, color = 'gray') + 
+ geom_hline(yintercept = 1, color = 'red', linetype = 2) +
+ geom_point(data = mean_values_A, aes(x = INCREMENT_CATEGORY, y = PROG_SALDOS_DISP), color = "blue", size = 3, shape = 18) +
+ geom_text(data = mean_values_A, aes(x = INCREMENT_CATEGORY, label = round(PROG_SALDOS_DISP, 2)), 
+           color = "blue", y = 4, vjust = -1, size = 3.5) +
+ ylim(0, 5) +
+ labs(title = "Crecimiento de Cartera Post Incremento, por Monto Acumulado de Incremento",
+      subtitle = '180 Dias Post Incremento de Linea',
+      x = "Monto Acumulado de Incremento",
+      y = "Evolucion de Cartera (Saldos Dispuestos) Post Incremento") +
+ theme_bw()
 ```
 
 <br>

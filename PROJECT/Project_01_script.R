@@ -101,4 +101,21 @@ univar_analisis <- function(data) {
 # Ejecutar la función de análisis univariante
 resultados <- univar_analisis(data)
 
+# Violin plot y boxplot
+data$hrs_studied <- as.character(data$hrs_studied) 
+mean_values_A <- aggregate(performance_idx ~ xtr_activities, data = data, FUN = mean, na.rm = TRUE)
+data_violines <- na.omit(data)
+
+ggplot(data = data_violines, aes(x = xtr_activities, y = performance_idx)) + 
+  geom_boxplot(alpha = 0.2) + 
+  geom_hline(yintercept = 1, color = 'red', linetype = 2) +
+  geom_point(data = mean_values_A, aes(x = xtr_activities, y = performance_idx), color = "blue", size = 3, shape = 18) +
+  geom_text(data = mean_values_A, aes(x = xtr_activities, label = round(performance_idx, 2)), 
+            color = "blue", y = 4, vjust = -1, size = 3.5) +
+  ylim(0, 100) +
+  labs(title = "Titulo",
+       subtitle = 'Subtitulo',
+       x = "X_titulo",
+       y = "Y_titulo") +
+  theme_bw()
 
