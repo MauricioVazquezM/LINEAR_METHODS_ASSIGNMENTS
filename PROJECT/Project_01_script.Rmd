@@ -22,6 +22,7 @@ library(FactoMineR)
 library(knitr)
 library(caret)
 library(dplyr)
+library(gridExtra)
 ```
 
 ```{r, echo=FALSE}
@@ -188,7 +189,62 @@ resultados_parte2 %>%
 * Observación 5: existe una considerable variabilidad en el rendimiento estudiantil. Aunque la mediana es de 55, un grupo notable de estudiantes tiene un rendimiento significativamente más bajo o más alto.
 * Observación 6: no hay valores faltantes en ninguna de las variables.
 
+<br>
+
 ***Visualización de las variables***
+
+Como objetivo de esta sección, se busca identificar patrones, detectar datos atípicos (outliers), analizar la estructura de los datos, examinar las relaciones entre las variables y comunicar, por medio de visualizaciones, para facilitar una mejor interpretación de los datos utilizados en este análisis.
+
+\newpage
+
+* **Explorando la variable 'performance_idx'**
+
+```{r fig.align='center', fig.width=6, fig.height=3, echo=FALSE}
+# Curva de la variable objetivo
+
+# Crear el histograma 
+histograma <- ggplot(data, aes(x = performance_idx)) +
+  geom_histogram(binwidth = 10, fill = "blue", color = "black", alpha = 0.7) +
+  labs(title = "Histograma de performance index", x = "performance index", y = "Frecuencia") +
+  theme_minimal()
+
+# Crear la curva de densidad 
+densidad <- ggplot(data, aes(x = performance_idx)) +
+  geom_density(fill = "blue", alpha = 0.5) +
+  labs(title = "Curva de Densidad de performance index", x = "performance index", y = "Densidad") +
+  theme_minimal()
+
+# Mostrar ambos gráficos en un solo layout
+grid.arrange(histograma, densidad, ncol = 2)
+```
+
+**Observaciones**
+
+1. Los gráficos muestran una distribución simétrica, lo que sugiere que los datos podrían aproximarse a una distribución normal. Sin embargo, la forma no es la típica campana suave que caracteriza a una distribución normal estándar.
+2. Existe una clara concentración de valores en el centro de la distribución. La mayoría de los valores del performance index se encuentran entre 40 y 80, según el histograma.
+3. El gráfico de densidad revela una distribución multimodal, ya que se observan dos picos en la curva, lo que indica la presencia de más de un grupo de valores predominantes en los datos.
+
+* **Explorando predictores de 'performance_idx'**
+
+```{r fig.align='center',fig.width=5, fig.height=3.5, echo=FALSE}
+# Violin plot y boxplot
+data$hrs_studied <- as.character(data$hrs_studied) 
+mean_values_A <- aggregate(performance_idx ~ xtr_activities, data = data, FUN = mean, na.rm = TRUE)
+data_violines <- na.omit(data)
+
+ggplot(data = data_violines, aes(x = xtr_activities, y = performance_idx)) + 
+  geom_boxplot(alpha = 0.2) + 
+  geom_hline(yintercept = 60, color = 'red', linetype = 2) +
+  geom_point(data = mean_values_A, aes(x = xtr_activities, y = performance_idx), color = "blue", size = 3, shape = 18) +
+  geom_text(data = mean_values_A, aes(x = xtr_activities, label = round(performance_idx, 2)), 
+            color = "blue", y = 45, vjust = -1, size = 3.5) +
+  ylim(0, 100) +
+  labs(title = "Titulo",
+       subtitle = 'Subtitulo',
+       x = "X_titulo",
+       y = "Y_titulo") +
+  theme_bw()
+```
 
 <br>
 
@@ -207,19 +263,7 @@ resultados_parte2 %>%
 <br>
 
 ```{r fig.width=10, fig.height=4.5, echo=FALSE}
-ggplot(data = data, aes(x = INCREMENT_CATEGORY, y = PROG_SALDOS_DISP)) + 
- geom_boxplot(alpha = 0.2) + 
- geom_violin(alpha = 0.05, color = 'gray') + 
- geom_hline(yintercept = 1, color = 'red', linetype = 2) +
- geom_point(data = mean_values_A, aes(x = INCREMENT_CATEGORY, y = PROG_SALDOS_DISP), color = "blue", size = 3, shape = 18) +
- geom_text(data = mean_values_A, aes(x = INCREMENT_CATEGORY, label = round(PROG_SALDOS_DISP, 2)), 
-           color = "blue", y = 4, vjust = -1, size = 3.5) +
- ylim(0, 5) +
- labs(title = "Crecimiento de Cartera Post Incremento, por Monto Acumulado de Incremento",
-      subtitle = '180 Dias Post Incremento de Linea',
-      x = "Monto Acumulado de Incremento",
-      y = "Evolucion de Cartera (Saldos Dispuestos) Post Incremento") +
- theme_bw()
+
 ```
 
 <br>

@@ -101,6 +101,21 @@ univar_analisis <- function(data) {
 # Ejecutar la función de análisis univariante
 resultados <- univar_analisis(data)
 
+# Crear el histograma 
+histograma <- ggplot(data, aes(x = performance_idx)) +
+  geom_histogram(binwidth = 1, fill = "blue", color = "black", alpha = 0.7) +
+  labs(title = "Histograma de performance index", x = "performance index", y = "Frecuencia") +
+  theme_minimal()
+
+# Crear la curva de densidad 
+densidad <- ggplot(data, aes(x = performance_idx)) +
+  geom_density(fill = "green", alpha = 0.5) +
+  labs(title = "Curva de Densidad de performance index", x = "performance index", y = "Densidad") +
+  theme_minimal()
+
+# Mostrar ambos gráficos en un solo layout
+grid.arrange(histograma, densidad, ncol = 2)
+
 # Violin plot y boxplot
 data$hrs_studied <- as.character(data$hrs_studied) 
 mean_values_A <- aggregate(performance_idx ~ xtr_activities, data = data, FUN = mean, na.rm = TRUE)
