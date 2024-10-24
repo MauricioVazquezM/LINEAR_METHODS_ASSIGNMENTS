@@ -121,16 +121,49 @@ data$hrs_studied <- as.character(data$hrs_studied)
 mean_values_A <- aggregate(performance_idx ~ xtr_activities, data = data, FUN = mean, na.rm = TRUE)
 data_violines <- na.omit(data)
 
+# Violin plot y boxplot
+data$hrs_studied <- as.character(data$hrs_studied) 
+mean_values_A <- aggregate(performance_idx ~ xtr_activities, data = data, FUN = mean, na.rm = TRUE)
+data_violines <- na.omit(data)
+
 ggplot(data = data_violines, aes(x = xtr_activities, y = performance_idx)) + 
   geom_boxplot(alpha = 0.2) + 
-  geom_hline(yintercept = 1, color = 'red', linetype = 2) +
+  geom_hline(yintercept = 60, color = 'red', linetype = 2) +
   geom_point(data = mean_values_A, aes(x = xtr_activities, y = performance_idx), color = "blue", size = 3, shape = 18) +
   geom_text(data = mean_values_A, aes(x = xtr_activities, label = round(performance_idx, 2)), 
-            color = "blue", y = 4, vjust = -1, size = 3.5) +
+            color = "blue", y = 45, vjust = -1, size = 3.5) +
   ylim(0, 100) +
   labs(title = "Titulo",
        subtitle = 'Subtitulo',
        x = "X_titulo",
        y = "Y_titulo") +
   theme_bw()
+
+# Muestreando
+set.seed(123) 
+data_sample <- data[sample(1:nrow(data), size = 300), ] 
+
+# Crear cada scatterplot individualmente
+scatter1 <- ggplot(data_sample, aes(x = hrs_studied, y = performance_idx)) +
+  geom_point(color = 'blue') +
+  labs(title = "Horas estudiadas vs Indice de performance", x = "hrs_studied", y = "performance_idx") +
+  theme_minimal()
+
+scatter2 <- ggplot(data_sample, aes(x = prev_scores, y = performance_idx)) +
+  geom_point(color = 'green') +
+  labs(title = "Scores anteriores vs Indice de performance", x = "prev_scores", y = "performance_idx") +
+  theme_minimal()
+
+scatter3 <- ggplot(data_sample, aes(x = sleep_hrs, y = performance_idx)) +
+  geom_point(color = 'red') +
+  labs(title = "Horas de sueño vs Indice de performance", x = "sleep_hrs", y = "performance_idx") +
+  theme_minimal()
+
+scatter4 <- ggplot(data_sample, aes(x = sample_questions, y = performance_idx)) +
+  geom_point(color = 'purple') +
+  labs(title = "Examenes prueba practicados vs Indice de performance", x = "sample_questions", y = "performance_idx") +
+  theme_minimal()
+
+# Organizar los gráficos en una cuadrícula de 2x2
+grid.arrange(scatter1, scatter2, scatter3, scatter4, ncol = 2)
 
