@@ -80,9 +80,9 @@ head(data) %>%
 
 <br>
 
-## Analisis exploratorio de datos
+## Análisis exploratorio de datos
 
-***Analisis univariado de los datos***
+***Análisis univariado de los datos***
 
 <br>
 
@@ -206,13 +206,23 @@ Como objetivo de esta sección, se busca identificar patrones, detectar datos at
 histograma <- ggplot(data, aes(x = performance_idx)) +
   geom_histogram(binwidth = 10, fill = "green", color = "black", alpha = 0.7) +
   labs(title = "Histograma de performance index", x = "performance index", y = "Frecuencia") +
-  theme_minimal()
+  theme_minimal()+
+  theme(
+    plot.title = element_text(size = 9),        
+    axis.title = element_text(size = 8),         
+    axis.text = element_text(size = 7)           
+  )
 
 # Crear la curva de densidad 
 densidad <- ggplot(data, aes(x = performance_idx)) +
   geom_density(fill = "red", alpha = 0.5) +
   labs(title = "Curva de Densidad de performance index", x = "performance index", y = "Densidad") +
-  theme_minimal()
+  theme_minimal()+
+  theme(
+    plot.title = element_text(size = 9),        
+    axis.title = element_text(size = 8),         
+    axis.text = element_text(size = 7)           
+  )
 
 # Mostrar ambos gráficos en un solo layout
 grid.arrange(histograma, densidad, ncol = 2)
@@ -264,7 +274,7 @@ scatter3 <- ggplot(data_sample, aes(x = sleep_hrs, y = performance_idx)) +
 
 scatter4 <- ggplot(data_sample, aes(x = sample_questions, y = performance_idx)) +
   geom_point(color = 'purple') +
-  labs(title = "Examenes prueba practicados vs Indice de performance", x = "sample_questions", y = "performance_idx") +
+  labs(title = "Examenes practicados vs Indice de performance", x = "sample_questions", y = "performance_idx") +
   theme_minimal()+
   theme(
     plot.title = element_text(size = 9),        
@@ -272,12 +282,30 @@ scatter4 <- ggplot(data_sample, aes(x = sample_questions, y = performance_idx)) 
     axis.text = element_text(size = 7)           
   )
 
-# Organizar los gráficos en una cuadrícula de 2x2
+# Cuadrícula de 2x2
 grid.arrange(scatter1, scatter2, scatter3, scatter4, ncol = 2)
 ```
 
+**Observaciones**
+
+1. No parece haber una relación clara entre las horas estudiadas y el índice de performance. Los puntos están dispersos a lo largo del eje 'performance_idx', lo que sugiere que estudiar más horas no necesariamente se traduce en un mejor performance.
+2. A medida que aumentan los scores anteriores, el indice de performance también tiende a aumentar. Esto mencionado nos dice que una relación positiva entre el puntaje previo y el rendimiento actual. En otras palabras, indica que un buen desempeño en evaluaciones anteriores puede predecir un buen rendimiento en la evaluación actual.
+3. Al igual que con las horas estudiadas, no hay un patrón claro entre las horas de sueño y el rendimiento. 
+4. No se observa una relación clara entre el número de exámenes de práctica realizados y el índice de performance. Los puntos están distribuidos uniformemente en todas las categorías de 'sample questions'.
+
+**Conclusión**
+
+En el gráfico de dispersión entre la variable que representan los scores anteriores y el indice de performance, hay una clara relación positiva. A medida que los puntajes anteriores aumentan, también lo hace el índice de performance, lo que sugiere una relación lineal que podría modelarse efectivamente con una regresión lineal simple. 
+
+Por otro lado, esta variable mencionada parece ser un fuerte predictor del índice de performance. La dispersión de los puntos sigue una tendencia ascendente notoria, indicativo que los valores altos de los scores anteriores se tienden a asociarse con valores altos del índice de performance. Por lo mencionado en los puntos antoriores, podemos hacer la suposición de que es un buen candidato para una predicción lineal.
 
 ```{r fig.align='center',fig.width=5, fig.height=3.5, echo=FALSE}
+
+```
+
+## Verificación de Supuestos
+
+```{r, echo=FALSE}
 
 ```
 
