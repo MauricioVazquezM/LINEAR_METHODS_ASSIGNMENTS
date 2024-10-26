@@ -309,7 +309,7 @@ Por otro lado, esta variable mencionada parece ser un fuerte predictor del índi
 
 * Recordar que la presencia de varianzas no constantes impacta fundamentalmente en la eficiencia de los estimadores y la estimación de la varianza de los estimadores.
 
-```{r fig.align='center',fig.width=5, fig.height=2.5, echo=FALSE}
+```{r fig.align='center',fig.width=7, fig.height=2.5, echo=FALSE}
 # Analisis de Linealidad y Homocedasticidad
 modelo <- lm(data = data, formula = performance_idx ~ prev_scores)
 
@@ -334,16 +334,26 @@ t.star.bf <-
 t.star.bf.p.value <- 
   pt(q = t.star.bf, df = nrow(data)-2, lower.tail = FALSE)
 
-ggplot(data = data) +
+homo_1 <- ggplot(data = data) +
   aes(x = modelo$fitted.values, y = modelo$residuals) +
   geom_vline(xintercept = median(modelo$fitted.values)) +
+  geom_hline(yintercept = 0) +
   geom_point() +
   theme_classic()
+
+homo_2 <- ggplot(data = grupo.1) +
+  aes(x = residuals) +
+  geom_density() +
+  geom_density(data = grupo.2, mapping = aes(x = residuals), colour = 'red') +
+  theme_classic()
+
+# Cuadrícula de 2x2
+grid.arrange(homo_1, homo_2, ncol = 2)
 
 ```
 
 * El plot nos indica que se cumplen razonablemente bien los supuestos de linealidad y homocedasticidad. Los residuos están distribuidos de manera aleatoria alrededor de cero, sin una tendencia visible, y la dispersión parece bastante constante a lo largo de los valores ajustados. Esto sugiere que el modelo de regresión lineal es adecuado y los supuestos básicos no parecen estar violados en este caso.
-
+* El plot nos indica que  la curva roja (valores ajustados superiores a la mediana) tiene más picos en la parte superior, lo que sugiere una mayor variabilidad en los residuos en ese grupo en comparación con los valores ajustados por debajo de la mediana. Sin embargo, ambas curvas de densidad son bastante similares en general. La mayoría de los residuos están concentrados en torno a cero, lo que indica que tanto los valores ajustados por debajo como por encima de la mediana tienden a tener residuos centrados en torno a cero.
 
 ***Normalidad de los residuos***
 
@@ -357,7 +367,7 @@ ggplot(data = data, aes(sample = residuals)) +
 
 ```
 
-* Como podemos observar, la mayoría de los puntos se alinean de manera bastante cercana a la línea diagonal, lo que indica que, en general, los residuos siguen una distribución aproximadamente normal en el centro de la distribución
+* Como podemos observar, la mayoría de los puntos se alinean de manera bastante cercana a la línea diagonal, lo que indica que, en general, los residuos siguen una distribución aproximadamente normal en el centro de la distribución.
 
 ***Independencia de los Residuos***
 
