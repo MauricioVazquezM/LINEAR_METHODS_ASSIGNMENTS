@@ -167,3 +167,13 @@ scatter4 <- ggplot(data_sample, aes(x = sample_questions, y = performance_idx)) 
 # Organizar los gráficos en una cuadrícula de 2x2
 grid.arrange(scatter1, scatter2, scatter3, scatter4, ncol = 2)
 
+
+# Analisis de Linealidad y Homocedasticidad
+modelo <- lm(data = data, formula = performance_idx ~ prev_scores)
+
+ggplot(data = data) +
+  aes(x = modelo$fitted.values, y = modelo$residuals) +
+  geom_vline(xintercept = median(modelo$fitted.values)) +
+  geom_point() +
+  theme_classic()
+

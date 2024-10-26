@@ -236,7 +236,7 @@ grid.arrange(histograma, densidad, ncol = 2)
 
 * **Explorando predictores de 'performance_idx'**
 
-```{r, fig.align='center',fig.width=7, fig.height=3.5, echo=FALSE}
+```{r fig.align='center',fig.width=7, fig.height=3.5, echo=FALSE}
 # Muestreando
 set.seed(123) 
 data_sample <- data[sample(1:nrow(data), size = 300), ] 
@@ -305,9 +305,69 @@ Por otro lado, esta variable mencionada parece ser un fuerte predictor del índi
 
 ## Verificación de Supuestos
 
-```{r, echo=FALSE}
+***Linealidad y Homocedasticidad***
+
+* Recordar que la presencia de varianzas no constantes impacta fundamentalmente en la eficiencia de los estimadores y la estimación de la varianza de los estimadores.
+
+```{r fig.align='center',fig.width=5, fig.height=2.5, echo=FALSE}
+# Analisis de Linealidad y Homocedasticidad
+modelo <- lm(data = data, formula = performance_idx ~ prev_scores)
+
+
+data$residuals <- modelo$residuals
+grupo.1 <- data[which(modelo$fitted.values <= median(modelo$fitted.values)),]
+grupo.2 <- data[which(modelo$fitted.values > median(modelo$fitted.values)),]
+mediana.epsilon.gorro.1 <- median(grupo.1$residuals)
+mediana.epsilon.gorro.2 <- median(grupo.2$residuals)
+grupo.1$d <- abs(grupo.1$residuals-mediana.epsilon.gorro.1)
+grupo.2$d <- abs(grupo.2$residuals-mediana.epsilon.gorro.2)
+d.media.1 <- mean(grupo.1$d)
+d.media.2 <- mean(grupo.2$d)
+
+SSD <- 
+  (sum((grupo.1$d - d.media.1)^2) + sum((grupo.2$d - d.media.2)^2)) / 
+  (nrow(data) - 2)
+
+t.star.bf <- 
+  abs(d.media.1 - d.media.2)/sqrt(SSD*(1/nrow(grupo.1) + 1/nrow(grupo.2)))
+
+t.star.bf.p.value <- 
+  pt(q = t.star.bf, df = nrow(data)-2, lower.tail = FALSE)
+
+ggplot(data = data) +
+  aes(x = modelo$fitted.values, y = modelo$residuals) +
+  geom_vline(xintercept = median(modelo$fitted.values)) +
+  geom_point() +
+  theme_classic()
 
 ```
+
+* El plot nos indica que se cumplen razonablemente bien los supuestos de linealidad y homocedasticidad. Los residuos están distribuidos de manera aleatoria alrededor de cero, sin una tendencia visible, y la dispersión parece bastante constante a lo largo de los valores ajustados. Esto sugiere que el modelo de regresión lineal es adecuado y los supuestos básicos no parecen estar violados en este caso.
+
+
+***Normalidad de los residuos***
+
+```{r fig.align='center',fig.width=7, fig.height=3.5, echo=FALSE}
+# COn un QQ plot
+ggplot(data = data, aes(sample = residuals)) + 
+  geom_qq() +
+  geom_qq_line(color = "red") +  
+  theme_classic() +
+  labs(title = "Q-Q Plot de los Residuos", x = "Cuantiles Teóricos", y = "Cuantiles Muestrales")
+
+```
+
+* Como podemos observar, la mayoría de los puntos se alinean de manera bastante cercana a la línea diagonal, lo que indica que, en general, los residuos siguen una distribución aproximadamente normal en el centro de la distribución
+
+***Independencia de los Residuos***
+
+```{r fig.align='center',fig.width=7, fig.height=3.5, echo=FALSE}
+
+```
+
+1. 
+2.
+3.
 
 <br>
 
