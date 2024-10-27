@@ -19,14 +19,26 @@ ggplot() +
   ) +
   theme_minimal()
 
+# $$
+#   \begin{align*}
+# \text{Casualties} = &\ \beta_0 - 0.22\cdot \text{ln(Pop)} + 36.462 \cdot \text{ln(QY1)} -58.876 \cdot \text{ln(QY2)} \\
+# & + 26.470 \cdot \text{ln(QY3)} - 15.870 \cdot \text{ln(QY4)} + 12.863 \cdot \text{ln(QY5)} + 1.416 \cdot \text{mUnemp} \\
+# & - 2.955 \cdot \text{highPR} + 2.582 \cdot \text{lowPR} + 0.0233 \cdot \text{areakmsq10K} + 7.094 \cdot \text{tropicAr} \\
+# & - 20.749 \cdot \text{elev100m} - 20.749 \cdot \text{langfrac} + 24.907 \cdot \text{langfracsq} + \epsilon
+# \end{align*}
+# $$
+  
+# Por valores proporcionados por la tabla
+coef_ln_Pop <- -0.022       
+se_ln_Pop <- 0.176        
+z_90 <- 1.645              
 
-/*
-$$
-  \begin{align*}
-\text{Casualties} = &\ \beta_0 - 0.22\cdot \text{ln(Pop)} + 36.462 \cdot \text{ln(QY1)} -58.876 \cdot \text{ln(QY2)} \\
-& + 26.470 \cdot \text{ln(QY3)} - 15.870 \cdot \text{ln(QY4)} + 12.863 \cdot \text{ln(QY5)} + 1.416 \cdot \text{mUnemp} \\
-& - 2.955 \cdot \text{highPR} + 2.582 \cdot \text{lowPR} + 0.0233 \cdot \text{areakmsq10K} + 7.094 \cdot \text{tropicAr} \\
-& - 20.749 \cdot \text{elev100m} - 20.749 \cdot \text{langfrac} + 24.907 \cdot \text{langfracsq} + \epsilon
-\end{align*}
-$$
-*/
+# Cálculo del margen de error
+margin_error <- z_90 * se_ln_Pop
+
+# Cálculo del intervalo de confianza
+ci_lower <- coef_ln_Pop - margin_error
+ci_upper <- coef_ln_Pop + margin_error
+
+# Resultado
+ci_ln_Pop <- c(ci_lower, ci_upper)
