@@ -1,0 +1,133 @@
+---
+title: 'Tarea 2: Estadistica Aplicada II'
+author: "Mauricio Vazquez"
+date: '2024-10-28'
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, tidy = TRUE, fig.width=10)
+
+# Libraries
+library(MASS)  
+library(ggplot2)
+library(GGally)
+library(mclust)
+library(kableExtra)
+library(FactoMineR)
+library(knitr)
+library(caret)
+library(dplyr)
+library(gridExtra)
+```
+
+## Ejercicio 01
+
+La tabla que se muestra a continuación presenta el resumen de los resultados
+obtenidos de haber ajustado seis modelos de regresión lineal múltiple al
+número total de víctimas de ataques terroristas en diferentes países y años (la
+tabla omite los resultados para el coeficiente correspondiente al intercepto,
+pero el modelo sí incluye al intercepto en su especificación). El estudio utilizó
+datos de 3,813 observaciones de ataques terroristas. Los paréntesis debajo
+de cada valor representan el error estándar asociado al estimador del
+coeficiente correspondiente.
+
+Las variables empleadas en el estudio fueron las siguientes:
+
+* GDPpc: producto interno bruto per capita.
+*  Pop: población
+* QY1: porcentaje del ingreso nacional correspondiente al primer quintil de la
+población.
+* QY2: porcentaje del ingreso nacional correspondiente al segundo quintil de la
+población.
+* QY3: porcentaje del ingreso nacional correspondiente al tercer quintil de la
+población.
+* QY4: porcentaje del ingreso nacional correspondiente al cuarto quintil de la
+población.
+* QY5: porcentaje del ingreso nacional correspondiente al último quintil de la
+población.
+* mUnemp: tasa de desempleo en la población masculina.
+* highPR: variable indicadora (0-1) para identificar países con altos niveles de
+derechos políticos.
+* lowPR: variable indicadora (0-1) para identificar países con bajos niveles de
+derechos políticos.
+* areakmsq10K: área total del país.
+* tropicAr: porcentaje del área total que corresponde territorio tropical.
+* eleve100m: elevación promedio.
+* langfrac: fragmentación lingüística (toma valores entre 0 y 1, donde el 0
+representa una menor fragmentación lingüística y 1 la mayor fragmentación
+lingüística).
+* langfracsq: fragmentación lingüística al cuadrado.
+
+***a) El autor no reporta los resultados obtenidos para el coeficiente del intercepto.¿Consideras esta decisión apropiada? Argumenta tu respuesta. (Hint:interpreta el significado del coeficiente del intercepto y, con base en ello, indica si resulta relevante o no.)***
+
+***b) En tu opinión, ¿cuál es el mejor modelo de los 6? Argumenta tu respuesta.***
+
+***c) Escribe la ecuación de regresión correspondiente al modelo que seleccionaste en la pregunta anterior.***
+
+***d) ¿Cómo interpretas el coeficiente de regresión correspondiente a la variable ln(QY1)?***
+
+***e) Calcula el intervalo de confianza al 90% para el coeficiente de regresión correspondiente a la variable ln(Pop) para el modelo 6.***
+
+***f) ¿Qué puedes decir sobre el ajuste del modelo 6? Argumenta tu respuesta.***
+
+## Ejercicio 02
+
+Considera el modelo 
+
+$$
+Y_i = X_{i0} + \beta_1 X_{i1} + \epsilon_i, \quad i = 1, \dots, n.
+$$
+
+Encuentra el estimador de mínimos cuadrados para $\beta_1$ y su varianza.
+
+
+## Ejercicio 03
+
+Se realizó un estudio en niños y niñas, realizando mediciones periódicas sobre características físicas asociadas a su somatotipo. Los datos adjuntos contienen las mediciones realizadas para las siguientes variables:
+
+* Sexo: 0, masculino; 1, femenino.
+* WT2: peso en Kg a los 2 años.
+* HT2: altura, en cm, a los 2 años.
+* WT9: peso, en Kg, a los 9 años.
+* HT9: altura, en cm, a los 9 años.
+* LG9: circunferencia de la pierna, en cm, a los 9 años.
+* ST9: fuerza a los 9 años.
+* WT18: peso, en Kg, a los 18 años.
+* HT18: altura, en cm, a los 18 años.
+* LG18: circunferencia de la pierna, en cm, a los 18 años.
+* ST18: fuerza a los 18 años.
+* BMI18: índice de masa corporal a los 18 años.
+* Soma: somatotipo, codificado en una escala del 1 al 7.
+
+Si se desea modelar el índice de masa corporal a los 18 años de los sujetos del estudio utilizando únicamente las variables relativas a las mediciones realizadas a los 2 y 9 años usando un modelo de regresión lineal múltiple:
+
+***1. Plantea el modelo de regresión a emplear. Incluye la ecuación y los supuestos del modelo.***
+
+***2. Ajusta el modelo de regresión y proporciona los valores (estimadores puntuales) de los coeficientes de la regresión obtenidos.***
+
+***3. Proporciona el intervalo de confianza al 99% para el coeficiente del peso a los 2 años de edad.***
+
+***4. El modelo, ¿tiene un buen ajuste? Argumenta tu respuesta utilizando los resultados de la regresión.***
+
+***5. Realiza una estimación puntual y por intervalos del índice de masa corporal medio para sujetos con los siguientes valores de las variables: WT2 = 15, HT2 = 90, WT9 = 35, HT9 = 142 , LG9 = 32, ST9 = 71. Utiliza un nivel de confianza del 99%.***
+
+***6. Realiza ahora una estimación, también puntual y por intervalos, pero para el pronóstico de una nueva observación para un individuo con las mismas características.***
+
+***7. Considera ahora agregar la variable relativa al sexo del sujeto al modelo.***
+
+Compara este modelo con el original. ¿Puedes concluir que el sexo es una característica relevante para el modelado del índice de masa corporal en
+presencia de las otras variables recogidas en el estudio?
+
+## Ejercicio 04
+
+Un modelo de regresión lineal múltiple siempre incrementa su poder explicativo, en términos de la $R_a^2$, al agregar variables adicionales. ¿Verdadero o falso? Argumenta tu respuesta.
+
+
+## Ejercicio 05
+
+Obtén el estimador de mínimos cuadrados para el caso en el que $\epsilon \sim N(0, \sigma^2 V)$.
+
+
