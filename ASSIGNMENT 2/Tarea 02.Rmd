@@ -1,5 +1,5 @@
 ---
-title: 'Tarea 2: Estadistica Aplicada II'
+title: 'Tarea 3: Estadistica Aplicada II'
 author: "Mauricio Vazquez"
 date: '2024-10-28'
 output:
@@ -21,6 +21,8 @@ library(knitr)
 library(caret)
 library(dplyr)
 library(gridExtra)
+library(jpeg) 
+library(grid)
 ```
 
 ## Ejercicio 01
@@ -33,6 +35,17 @@ pero el modelo sí incluye al intercepto en su especificación). El estudio util
 datos de 3,813 observaciones de ataques terroristas. Los paréntesis debajo
 de cada valor representan el error estándar asociado al estimador del
 coeficiente correspondiente.
+
+```{r fig.align='center', fig.width=3, fig.height=3, echo=FALSE}
+img <- readJPEG("C:/Users/mauva/OneDrive/Documents/ITAM/9no Semestre/METODOS LINEALES/REPOSITORIO/LINEAR_METHODS_ASSIGNMENTS_FALL2024/ASSIGNMENT 2/img1.jpg")
+
+ggplot() +
+  annotation_custom(
+    rasterGrob(img, width = unit(1, "npc"), height = unit(1, "npc")),
+    xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf
+  ) +
+  theme_minimal()
+```
 
 Las variables empleadas en el estudio fueron las siguientes:
 
@@ -63,15 +76,62 @@ lingüística).
 
 ***a) El autor no reporta los resultados obtenidos para el coeficiente del intercepto.¿Consideras esta decisión apropiada? Argumenta tu respuesta. (Hint:interpreta el significado del coeficiente del intercepto y, con base en ello, indica si resulta relevante o no.)***
 
+Respuesta: Recordar que el coeficiente del intercepto representa el valor promedio de la variable dependiente cuando todas las variables predictoras son cero. Bajo este problema, el intercepto sería la estimación del número total de víctimas cuando todas las variables explicativas son cero. Dado que esta situación no tiene una interpretación práctica en este contexto, omitir el coeficiente del intercepto en la presentación de resultados puede ser apropiado.
+
 ***b) En tu opinión, ¿cuál es el mejor modelo de los 6? Argumenta tu respuesta.***
+
+Respuesta: En mi opinión, el **modelo 6** es el mejor entre los seis modelos presentados. Esto se debe a que maximiza el 
+$R_a^2$ y contiene variables que son estadísticamente significativas, lo cual indica una buena capacidad explicativa sin comprometer la parsimonia.
 
 ***c) Escribe la ecuación de regresión correspondiente al modelo que seleccionaste en la pregunta anterior.***
 
+Respuesta:
+
+```{r fig.align='center', fig.width=4, fig.height=1, echo=FALSE}
+img <- readJPEG("C:/Users/mauva/OneDrive/Documents/ITAM/9no Semestre/METODOS LINEALES/REPOSITORIO/LINEAR_METHODS_ASSIGNMENTS_FALL2024/ASSIGNMENT 2/img2.jpg")
+
+ggplot() +
+  annotation_custom(
+    rasterGrob(img, width = unit(1, "npc"), height = unit(1, "npc")),
+    xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf
+  ) +
+  theme_minimal()
+```
+
+Donde:
+
+- $\beta_0$ es el intercepto.
+- $\epsilon$ es el término de error.
+
 ***d) ¿Cómo interpretas el coeficiente de regresión correspondiente a la variable ln(QY1)?***
+
+Un incremento del 1% en QY1 se asocia con un aumento aproximado del 36.462% en el número de víctimas de ataques terroristas
 
 ***e) Calcula el intervalo de confianza al 90% para el coeficiente de regresión correspondiente a la variable ln(Pop) para el modelo 6.***
 
+```{r echo=FALSE}
+# Por valores proporcionados por la tabla
+coef_ln_Pop <- -0.022       
+se_ln_Pop <- 0.176        
+z_90 <- 1.645              
+
+# Cálculo del margen de error
+margin_error <- z_90 * se_ln_Pop
+
+# Cálculo del intervalo de confianza
+ci_lower <- coef_ln_Pop - margin_error
+ci_upper <- coef_ln_Pop + margin_error
+
+# Resultado
+ci_ln_Pop <- c(ci_lower, ci_upper)
+```
+
+Respuesta: El intervalo de confianza al 90% para el coeficiente de \text{ln(Pop)} es aproximadamente 
+(`r round(ci_ln_Pop[1], 3)`, `r round(ci_ln_Pop[2], 3)`)
+
 ***f) ¿Qué puedes decir sobre el ajuste del modelo 6? Argumenta tu respuesta.***
+
+Respuesta: El modelo 6 presenta un ajuste limitado, pues explica solo una fracción reducida de la variabilidad en los datos. No obstante, la inclusión de variables estadísticamente significativas sugiere que algunas de ellas están vinculadas de manera relevante con el número de víctimas de ataques terroristas. Esto implica que el modelo 6 podría ser útil para señalar ciertos factores relacionados, aunque no ofrece un ajuste robusto y probablemente requeriría mejoras o la incorporación de otras variables clave para incrementar su capacidad explicativa.
 
 ## Ejercicio 02
 
@@ -82,6 +142,8 @@ Y_i = X_{i0} + \beta_1 X_{i1} + \epsilon_i, \quad i = 1, \dots, n.
 $$
 
 Encuentra el estimador de mínimos cuadrados para $\beta_1$ y su varianza.
+
+***Revisar pdf anexo***
 
 
 ## Ejercicio 03
@@ -126,8 +188,12 @@ presencia de las otras variables recogidas en el estudio?
 Un modelo de regresión lineal múltiple siempre incrementa su poder explicativo, en términos de la $R_a^2$, al agregar variables adicionales. ¿Verdadero o falso? Argumenta tu respuesta.
 
 
+La afirmación es **falsa**. Esto debido a que en un modelo de regresión lineal múltiple, agregar variables adicionales **no garantiza un aumento en el poder explicativo en términos del $R_a^2$ (R-cuadrado ajustado)**. El $R_a^2$ se diferencia del $R^2$ en que penaliza el modelo por la cantidad de variables incluidas, ajustando el poder explicativo en función del número de predictores. Mientras que el $R^2$ siempre aumenta o se mantiene igual al agregar variables, el $R_a^2$ solo aumenta si la nueva variable tiene un valor explicativo significativo para el modelo.
+
 ## Ejercicio 05
 
 Obtén el estimador de mínimos cuadrados para el caso en el que $\epsilon \sim N(0, \sigma^2 V)$.
+
+***Revisar pdf anexo***
 
 
