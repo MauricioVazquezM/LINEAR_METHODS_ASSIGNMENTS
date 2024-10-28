@@ -215,18 +215,140 @@ Donde:
 
 ***2. Ajusta el modelo de regresión y proporciona los valores (estimadores puntuales) de los coeficientes de la regresión obtenidos.***
 
+```{r fig.align='center', fig.width=8, fig.height=0.5, echo=FALSE}
+# Ajustar el modelo de regresión lineal
+modelo <- lm(BMI18 ~ WT2 + HT2 + WT9 + HT9 + LG9 + ST9 + WT18 + HT18 + LG18 + ST18 + Soma, data = datos)
+
+# Mostrar los coeficientes estimados
+summary(modelo)$coefficients
+```
+
 ***3. Proporciona el intervalo de confianza al 99% para el coeficiente del peso a los 2 años de edad.***
+```{r fig.align='center', fig.width=8, fig.height=0.5, echo=FALSE}
+# Extraer el estimador y el error estándar para WT2 de coeficientes
+coeficientes <- summary(modelo)$coefficients
+coef_WT2 <- coeficientes["WT2", "Estimate"]
+se_WT2 <- coeficientes["WT2", "Std. Error"]
+
+# Calcular el intervalo de confianza al 99%
+z_99 <- 2.576  
+margin_error <- z_99 * se_WT2
+ci_lower <- coef_WT2 - margin_error
+ci_upper <- coef_WT2 + margin_error
+```
+
+* El intervalo de confianza al 99% para el coeficiente de \text{WT2} es aproximadamente 
+(`r round(ci_lower, 3)`, `r round(ci_upper, 3)`).
 
 ***4. El modelo, ¿tiene un buen ajuste? Argumenta tu respuesta utilizando los resultados de la regresión.***
 
+```{r fig.align='center', fig.width=8, fig.height=0.5, echo=FALSE}
+# Obtener el resumen del modelo
+summary_model <- summary(modelo)
+
+# Extraer R2 y R2 ajustado
+r_squared <- summary_model$r.squared
+adj_r_squared <- summary_model$adj.r.squared
+
+# Ver la significancia de los coeficientes
+coef_significance <- summary_model$coefficients
+```
+
+Tenemos que:
+
+* \( R^2 \): `r round(r_squared, 3)`
+* \( R_a^2 \): `r round(adj_r_squared, 3)`
+* \(\text{Coeficientes de Estimadores}\): (`r round(coef_significance, 3)`)
+
+Con base en los valores de $R^2$ y $R_a^2$, el modelo presenta un muy buen ajuste. Estos nos dice que explica la mayor parte de la variabilidad en la variable de interés de manera precisa y eficaz. La calidad de ajuste indica que este modelo puede ser confiable para realizar predicciones sobre la $BMI18$.
+
+
 ***5. Realiza una estimación puntual y por intervalos del índice de masa corporal medio para sujetos con los siguientes valores de las variables: WT2 = 15, HT2 = 90, WT9 = 35, HT9 = 142 , LG9 = 32, ST9 = 71. Utiliza un nivel de confianza del 99%.***
+
+```{r fig.align='center', fig.width=8, fig.height=0.5, echo=FALSE}
+# Valores para la prediccion
+nuevo_sujeto <- data.frame(
+  WT2 = 15,
+  HT2 = 90,
+  WT9 = 35,
+  HT9 = 142,
+  LG9 = 32,
+  ST9 = 71,
+  WT18 = 0,   
+  HT18 = 0,   
+  LG18 = 0,  
+  ST18 = 0,   
+  Soma = 0    
+)
+
+# Predicción puntual y intervalo de confianza al 99%
+prediccion <- predict(modelo, newdata = nuevo_sujeto, interval = "confidence", level = 0.99)
+
+# Sacar los valores
+fit <- prediccion[1, "fit"]
+lwr <- prediccion[1, "lwr"]
+upr <- prediccion[1, "upr"]
+```
+
+* Tenemos que nuestra predicción da el valor de `r round(fit, 3)`. Con un intervalo de confianza de: (`r round(lwr, 3)`, `r round(upr, 3)`).
 
 ***6. Realiza ahora una estimación, también puntual y por intervalos, pero para el pronóstico de una nueva observación para un individuo con las mismas características.***
 
-***7. Considera ahora agregar la variable relativa al sexo del sujeto al modelo.***
+```{r fig.align='center', fig.width=8, fig.height=0.5, echo=FALSE}
+# Valores de la nueva prediccion
+nueva_observacion <- data.frame(
+  WT2 = 15,
+  HT2 = 90,
+  WT9 = 35,
+  HT9 = 142,
+  LG9 = 32,
+  ST9 = 71,
+  WT18 = 0,   
+  HT18 = 0,   
+  LG18 = 0,   
+  ST18 = 0,   
+  Soma = 0    
+)
 
-Compara este modelo con el original. ¿Puedes concluir que el sexo es una característica relevante para el modelado del índice de masa corporal en
-presencia de las otras variables recogidas en el estudio?
+# Realizando la predicción puntual y obtener el intervalo de predicción al 99%
+prediccion_nueva <- predict(modelo, newdata = nueva_observacion, interval = "prediction", level = 0.99)
+
+# Sacar los valores
+fit2 <- prediccion_nueva[1, "fit"]
+lwr2 <- prediccion_nueva[1, "lwr"]
+upr2 <- prediccion_nueva[1, "upr"]
+```
+
+* Tenemos que nuestra predicción da el valor de `r round(fit2, 3)`. Con un intervalo de confianza de: (`r round(lwr2, 3)`, `r round(upr2, 3)`).
+
+***7. Considera ahora agregar la variable relativa al sexo del sujeto al modelo.Compara este modelo con el original. ¿Puedes concluir que el sexo es una característica relevante para el modelado del índice de masa corporal en presencia de las otras variables recogidas en el estudio?***
+
+```{r fig.align='center', fig.width=8, fig.height=0.5, echo=FALSE}
+# Ajustar el modelo de regresión lineal
+modelo2 <- lm(BMI18 ~ Sex + WT2 + HT2 + WT9 + HT9 + LG9 + ST9 + WT18 + HT18 + LG18 + ST18 + Soma, data = datos)
+
+# Mostrar los coeficientes estimados
+summary(modelo2)$coefficients
+
+# Obtener el resumen del modelo
+summary_model2 <- summary(modelo2)
+
+# Extraer R2 y R2 ajustado
+r_squared2 <- summary_model2$r.squared
+adj_r_squared2 <- summary_model2$adj.r.squared
+
+# Ver la significancia de los coeficientes
+coef_significance2 <- summary_model2$coefficients
+```
+
+Comparativo:
+
+* \( R^2 \): Modelo sin la variable Sex: `r round(r_squared, 5)` vs Modelo con la variable Sex: `r round(r_squared2, 5)`.
+* \( R_a^2 \): Modelo sin la variable Sex: `r round(adj_r_squared, 5)` vs Modelo con la variable Sex: `r round(adj_r_squared2, 5)`.
+
+Conclusión:
+
+* Dado que la inclusión de la variable "Sex" no mejora significativamente el ajuste del modelo (reflejado en un cambio insignificante en $R^2$ y una leve disminución en $R_a^2$), es probable que esta variable no tenga una relación relevante con la variable dependiente en este contexto. Por lo tanto, se podría omitir la variable "Sex" sin perder capacidad explicativa en el modelo.
 
 ## Ejercicio 04
 
