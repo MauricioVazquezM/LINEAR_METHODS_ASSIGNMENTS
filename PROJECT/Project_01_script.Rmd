@@ -313,7 +313,6 @@ Por otro lado, esta variable mencionada parece ser un fuerte predictor del índi
 # Analisis de Linealidad y Homocedasticidad
 modelo <- lm(data = data, formula = performance_idx ~ prev_scores)
 
-
 data$residuals <- modelo$residuals
 grupo.1 <- data[which(modelo$fitted.values <= median(modelo$fitted.values)),]
 grupo.2 <- data[which(modelo$fitted.values > median(modelo$fitted.values)),]
@@ -357,7 +356,7 @@ grid.arrange(homo_1, homo_2, ncol = 2)
 
 ***Normalidad de los residuos***
 
-```{r fig.align='center',fig.width=7, fig.height=3.5, echo=FALSE}
+```{r fig.align='center',fig.width=5, fig.height=2.5, echo=FALSE}
 # COn un QQ plot
 ggplot(data = data, aes(sample = residuals)) + 
   geom_qq() +
@@ -371,27 +370,60 @@ ggplot(data = data, aes(sample = residuals)) +
 
 ***Independencia de los Residuos***
 
-```{r fig.align='center',fig.width=7, fig.height=3.5, echo=FALSE}
+```{r fig.align='center',fig.width=8, fig.height=3.5, echo=FALSE}
+# Extrayendo los residuos del modelo para visualizacion
+residuos <- modelo$residuals
 
+# Crear una secuencia 
+tiempo <- 1:length(residuos)
+
+# Muestra seed
+set.seed(123)  
+sample_size <- 500  
+
+# Muestreando los índices de los residuos y ordenarlos
+indices_muestra <- sort(sample(tiempo, size = sample_size))
+
+# Crear el gráfico con los datos muestreados
+plot(tiempo[indices_muestra], residuos[indices_muestra], type = "l", 
+     main = "Residuos a lo Largo del Tiempo (Muestreados y ordenados)", 
+     xlab = "Índice de Observación", 
+     ylab = "Residuos")
 ```
 
-1. 
-2.
-3.
+* Los residuos no tienen un patrón de cambio sistemático a lo largo del índice, lo cual es un indicativo de independencia de los residuos.
+
+***Con base en los resultados obtenidos, podemos concluir que se cumplen los supuestos de la regresión lineal. La distribución de los residuos y su comportamiento a lo largo del tiempo sugieren que no hay patrones evidentes de autocorrelación ni heterocedasticidad, y que la normalidad de los residuos es razonable.***
+
+***Por lo tanto, podemos asumir que el modelo de regresión lineal es adecuado para estos datos y que cumple con los supuestos necesarios para realizar inferencias confiables a partir de él.***
 
 <br>
 
 ## Ajuste de un modelo lineal simple
 
-<br>
+* Para entender la relación entre el índice de desempeño y las calificaciones anteriores, ajustamos un modelo de regresión lineal simple. Este modelo nos ayudará a evaluar la fuerza y la dirección de la relación entre las dos variables, permitiéndonos inferir si aumentos en las calificaciones previas están asociados con un incremento en el índice de desempeño actual del estudiante.
 
 ```{r, echo=FALSE}
+# Modelo oficial
+modelo_of <- lm(data = data, formula = performance_idx ~ prev_scores)
 
+summary(modelo_of)
 ```
 
-<br>
+### Analisis del modelo propuesto
 
-## Analisis del modelo propuesto
+* **Residuales**
+
+* **Coeficientes**
+
+* **Residual Standard Error**
+
+* **Multiple R-squared**
+
+* **Ajusted R-squared**
+
+* **F-statistic**
+
 
 <br>
 

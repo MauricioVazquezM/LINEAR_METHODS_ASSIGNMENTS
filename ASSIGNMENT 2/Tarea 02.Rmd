@@ -87,7 +87,7 @@ $R_a^2$ y contiene variables que son estadísticamente significativas, lo cual i
 
 Respuesta:
 
-```{r fig.align='center', fig.width=4, fig.height=1, echo=FALSE}
+```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
 img <- readJPEG("C:/Users/mauva/OneDrive/Documents/ITAM/9no Semestre/METODOS LINEALES/REPOSITORIO/LINEAR_METHODS_ASSIGNMENTS_FALL2024/ASSIGNMENT 2/img2.jpg")
 
 ggplot() +

@@ -177,3 +177,22 @@ ggplot(data = data) +
   geom_point() +
   theme_classic()
 
+# Extrayendo los residuos del modelo para visualizacion
+residuos <- modelo$residuals
+
+# Crear una secuencia 
+tiempo <- 1:length(residuos)
+
+# Muestra seed
+set.seed(123)  
+sample_size <- 500  
+
+# Muestreando los índices de los residuos y ordenarlos
+indices_muestra <- sort(sample(tiempo, size = sample_size))
+
+# Crear el gráfico con los datos muestreados
+plot(tiempo[indices_muestra], residuos[indices_muestra], type = "l", 
+     main = "Residuos a lo Largo del Tiempo (Muestreados y ordenados)", 
+     xlab = "Índice de Observación", 
+     ylab = "Residuos")
+
