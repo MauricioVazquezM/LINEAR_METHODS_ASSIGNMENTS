@@ -166,7 +166,52 @@ Se realizó un estudio en niños y niñas, realizando mediciones periódicas sob
 
 Si se desea modelar el índice de masa corporal a los 18 años de los sujetos del estudio utilizando únicamente las variables relativas a las mediciones realizadas a los 2 y 9 años usando un modelo de regresión lineal múltiple:
 
+```{r, echo=FALSE}
+# Ruta del archivo
+file_path <- "C:/Users/mauva/OneDrive/Documents/ITAM/9no Semestre/METODOS LINEALES/REPOSITORIO/LINEAR_METHODS_ASSIGNMENTS_FALL2024/ASSIGNMENT 2/datos_ejercicio_2_tarea_3.txt"
+
+# Leyendo el archivo con el delimitador '|'
+datos <- read.delim(file_path, sep = "|")
+
+# Revisnado las primeras columnas
+#head(datos)
+```
+
 ***1. Plantea el modelo de regresión a emplear. Incluye la ecuación y los supuestos del modelo.***
+
+* Supuestos del modelo:
+
+Se tiene que:
+
+$$
+E(\epsilon) = 0
+$$
+$$
+\text{Var}(\epsilon) = \sigma^2 I
+$$
+
+$$
+\epsilon \sim N(0, \sigma^2 I)
+$$
+
+* Ecuación del modelo:
+
+```{r fig.align='center', fig.width=8, fig.height=0.5, echo=FALSE}
+img <- readJPEG("C:/Users/mauva/OneDrive/Documents/ITAM/9no Semestre/METODOS LINEALES/REPOSITORIO/LINEAR_METHODS_ASSIGNMENTS_FALL2024/ASSIGNMENT 2/img3.jpg")
+
+ggplot() +
+  annotation_custom(
+    rasterGrob(img, width = unit(1, "npc"), height = unit(1, "npc")),
+    xmin = -Inf, xmax = Inf, ymin = -Inf, ymax = Inf
+  ) +
+  theme_minimal()
+```
+
+Donde:
+
+- \(\beta_0\) es el intercepto del modelo.
+- \(\beta_1, \beta_2, \dots, \beta_{12}\) son los coeficientes de regresión correspondientes a cada variable predictora.
+- \(\epsilon\) es el término de error del modelo.
 
 ***2. Ajusta el modelo de regresión y proporciona los valores (estimadores puntuales) de los coeficientes de la regresión obtenidos.***
 

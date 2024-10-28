@@ -42,3 +42,15 @@ ci_upper <- coef_ln_Pop + margin_error
 
 # Resultado
 ci_ln_Pop <- c(ci_lower, ci_upper)
+
+# Leyendo archivo
+file_path <- "C:/Users/mauva/OneDrive/Documents/ITAM/9no Semestre/METODOS LINEALES/REPOSITORIO/LINEAR_METHODS_ASSIGNMENTS_FALL2024/ASSIGNMENT 2/datos_ejercicio_2_tarea_3.txt"
+
+# Leyendo el archivo con el delimitador '|'
+datos <- read.delim(file_path, sep = "|")
+head(datos)
+
+
+#$$
+#  \text{BMI18} = \beta_0 + \beta_1 \cdot \text{Sexo} + \beta_2 \cdot \text{WT2} + \beta_3 \cdot \text{HT2} + \beta_4 \cdot \text{WT9} + \beta_5 \cdot \text{HT9} + \beta_6 \cdot \text{LG9} + \beta_7 \cdot \text{ST9} + \beta_8 \cdot \text{WT18} + \beta_9 \cdot \text{HT18} + \beta_{10} \cdot \text{LG18} + \beta_{11} \cdot \text{ST18} + \beta_{12} \cdot \text{Soma} + \epsilon
+#$$
