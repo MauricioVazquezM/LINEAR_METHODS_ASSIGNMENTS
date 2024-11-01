@@ -189,7 +189,6 @@ $$
 $$
 \text{Var}(\epsilon) = \sigma^2 I
 $$
-
 $$
 \epsilon \sim N(0, \sigma^2 I)
 $$
