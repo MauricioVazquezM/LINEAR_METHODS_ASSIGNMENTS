@@ -46,7 +46,7 @@ colnames(data) <- c("hrs_studied", "prev_scores", "xtr_activities",
 
 ## Objetivo
 
-* El conjunto de datos seleccionado para este proyecto tiene como objetivo explorar el impacto de las horas de estudio, los puntajes anteriores, las actividades extracurriculares, las horas de sueño y los exámenes de prueba en el rendimiento de los estudiantes. Se planea ajustar un modelo lineal simple para analizar el impacto de cada una de estas variables de manera individual en la variable objetivo, con el fin de determinar cuál de ellas explica mejor el rendimiento del estudiante por sí sola y brinda mejores resultados en términos de ajuste y predicción.
+* El conjunto de datos seleccionado para este proyecto tiene como objetivo explorar el impacto de las horas de estudio, los puntajes anteriores, las actividades extracurriculares, las horas de sueño y los exámenes de prueba en el rendimiento de los estudiantes. Se planea ajustar un modelo lineal simple para analizar el impacto de una de estas variables en la variable objetivo. Con el fin de determinar cuál de ellas explica mejor el rendimiento del estudiante por sí sola y brinda mejores resultados en términos de ajuste y predicción, se procedio a hacer un analisis exploratorio de los datos.
 
 <br>
 
@@ -63,7 +63,7 @@ head(data) %>%
 
 ***Descripción*** 
 
-* El Conjunto de Datos de rendimiento estudiantil está diseñado para examinar los factores que influyen en el rendimiento académico de los estudiantes. El conjunto de datos consta de 10,000 registros de estudiantes, y cada registro contiene información sobre varios predictores y un índice de rendimiento.
+* El conjunto de datos de rendimiento estudiantil está diseñado para examinar los factores que influyen en el rendimiento académico de los estudiantes. Este consta de 10,000 registros de estudiantes, y cada registro contiene información sobre varios predictores y un índice de rendimiento.
 
 ***Variables***
 
@@ -393,9 +393,7 @@ plot(tiempo[indices_muestra], residuos[indices_muestra], type = "l",
 
 * Los residuos no tienen un patrón de cambio sistemático a lo largo del índice, lo cual es un indicativo de independencia de los residuos.
 
-***Con base en los resultados obtenidos, podemos concluir que se cumplen los supuestos de la regresión lineal. La distribución de los residuos y su comportamiento a lo largo del tiempo sugieren que no hay patrones evidentes de autocorrelación ni heterocedasticidad, y que la normalidad de los residuos es razonable.***
-
-***Por lo tanto, podemos asumir que el modelo de regresión lineal es adecuado para estos datos y que cumple con los supuestos necesarios para realizar inferencias confiables a partir de él.***
+Con base en los resultados obtenidos, podemos concluir que se cumplen los supuestos de la regresión lineal. La distribución de los residuos y su comportamiento a lo largo del tiempo sugieren que no hay patrones evidentes de autocorrelación ni heterocedasticidad, y que la normalidad de los residuos es razonable. Por lo tanto, podemos asumir que el modelo de regresión lineal es adecuado para estos datos y que cumple con los supuestos necesarios para realizar inferencias confiables a partir de él.
 
 <br>
 
@@ -414,30 +412,58 @@ summary(modelo_of)
 
 * **Residuales**
 
+La mediana cercana a cero sugiere que los residuos están distribuidos simétricamente alrededor de cero. Esto indica que el modelo no tiene un sesgo. Por otro lado, el rango de los residuos (aproximadamente de -17.77 a 19.43) indica que existe variabilidad en la precisión del modelo.
+
 * **Coeficientes**
+
+El coeficiente de prev_scores es significativo y positivo, lo que indica que prev_scores es un buen predictor de performance_idx. En otras palabras, el indice de rendimiento tiende a aumentar, en promedio, en 1.0138 unidades por cada punto adicional en prev_scores. Ademas, los errores estándar bajos para ambos coeficientes sugieren que las estimaciones son precisas.
 
 * **Residual Standard Error**
 
-* **Multiple R-squared**
+El valor de 7.744, en residual standard error, indica que, en promedio, los valores predichos por el modelo difieren de los valores observados en aproximadamente 7.744 unidades. Dado el valor de este, podemos decir que el modelo ajusta los datos bastante bien, con un error promedio relativamente pequeño en las predicciones del indice de performance.
 
-* **Ajusted R-squared**
+* **R-squared**
+
+El R-cuadrado de 0.8376 nos dice que el modelo tiene un buen ajuste y explica la mayoría de la variabilidad en performance_idx a partir de prev_scores. Esto nos indica que el modelo es robusto y adecuado
 
 * **F-statistic**
 
+El valor del estadistico F muy alto junto con un valor p extremadamente bajo nos indica que el modelo de regresión es altamente significativo. En otras palabras, sugiere que el predictor prev_scores tiene un impacto real en performance_idx y que el modelo es bueno para realizar predicciones.
 
 <br>
 
-```{r fig.width=10, fig.height=4.5, echo=FALSE}
+```{r fig.align='center',fig.width=6, fig.height=4, echo=FALSE}
+# Muestreando para visualizar
+set.seed(42)  
+sample_size <- 250  
 
+# Muestreando los índices
+indices_muestra <- sort(sample(tiempo, size = sample_size))
+data_sample <- data[indices_muestra, ]
+
+# Grafico de regresion
+ggplot(data = data_sample) + 
+  aes(x = prev_scores, y = performance_idx) +
+  geom_point() +
+  geom_smooth(method = 'lm', formula = y ~ x, se = TRUE) +
+  theme_bw()
 ```
+
+<br>
+
+## ANOVA
+
+```{r fig.width=10, fig.height=4.5, echo=FALSE}
+anova(object = modelo_of)
+```
+
+1. Como se menciona arriba, mediante la estadística F alta y el valor p cercano a cero se confirma, en la tabla ANOVA, que el predictor prev_scores es estadísticamente significativo y tiene un efecto sobre indice de performance.
+2. La suma de cuadrados explicada por prev_scores en comparación con la suma de cuadrados residual nos indica que prev_scores explica la mayor parte de la variabilidad en indice de performance.
 
 <br>
 
 ## Conclusiones
 
-<br>
-
-```{r fig.width=10, fig.height=4.5, echo=FALSE}
-
-```
+* Con un alto R-cuadrado y un buen ajuste, el modelo es bueno para predecir el rendimiento escolar en función de los puntajes previos. Esto indica que el historial de rendimiento tiene un impacto significativo en el rendimiento futuro. 
+* Por otro lado, aunque el modelo ajusta bien los datos, el rango de los residuos sugiere que existen algunas observaciones con mayores errores de predicción. Se considera que, para futuras iteraciones del proyecto, se debe examinar estos puntos. Lo cual puede resultar en comprender si hay factores adicionales que afectan el indice de rendimiento academico.
 

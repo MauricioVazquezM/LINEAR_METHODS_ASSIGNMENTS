@@ -196,3 +196,26 @@ plot(tiempo[indices_muestra], residuos[indices_muestra], type = "l",
      xlab = "Índice de Observación", 
      ylab = "Residuos")
 
+# Modelo oficial
+modelo_of <- lm(data = data, formula = performance_idx ~ prev_scores)
+
+summary(modelo_of)
+
+# Muestreando para visualizar
+set.seed(42)  
+sample_size <- 250  
+
+# Muestreando los índices
+indices_muestra <- sort(sample(tiempo, size = sample_size))
+data_sample <- data[indices_muestra, ]
+
+# Grafico de regresion
+ggplot(data = data_sample) + 
+  aes(x = prev_scores, y = performance_idx) +
+  geom_point() +
+  geom_smooth(method = 'lm', formula = y ~ x, se = TRUE) +
+  theme_bw()
+
+# Anova
+anova(object = modelo_of)
+
