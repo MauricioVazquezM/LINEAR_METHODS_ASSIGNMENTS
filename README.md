@@ -1,11 +1,5 @@
 # LINEAR METHODS ASSIGNMENTS COURSE
 
-<p align="center">
-  <img width="700" height="500" src="https://media.geeksforgeeks.org/wp-content/uploads/20231129130431/11111111.png">
-</p>
-
-<br>
-
 ## DEFINITION
 
 - Linear models are a class of statistical models used to describe the relationship between a dependent variable and one or more independent variables. The simplest form is simple linear regression, which represents the relationship between two variables using a straight line. The general formula for a linear model is:
