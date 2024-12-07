@@ -1,8 +1,10 @@
 ---
 title: 'Tarea 4: Estadistica Aplicada II'
-author: "Mauricio Vazquez"
+author: "Mauricio Vazquez (000191686)"
 date: '2024-12-11'
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -24,3 +26,82 @@ library(grid)
 ```
 
 ## Ejercicio 01
+
+Una cadena de tiendas de ventas al menudeo da seguimiento a la productividad y costos de sus tiendas. Se te proporcionan datos de uno de sus centros de distribución recolectados durante un año. Cada observación representa el registro de la actividad semanal. 
+
+Las variables acopiadas son:
+
+- $X_1$: Número de paquetes distribuidos.
+- $X_2$: Costos indirectos (en porcentaje) asociados al total de horas trabajadas.
+- $X_3$: Variable cualitativa que codifica si la semana tuvo días feriados (1) o no (0).
+- $Y$: Total de horas trabajadas.
+
+1. Elabora los diagramas de caja y brazos de las variables explicativas. ¿Se pueden observar datos atípicos? ¿Existen espacios (gaps) sin observaciones?
+
+2. Los datos son proporcionados en orden cronológico. ¿Qué se observa en las gráficas cronológicas?
+
+3. Obtén las gráficas de dispersión de los datos y la matriz de correlaciones. ¿Qué se puede deducir de estas gráficas y matriz?
+
+4. Estima el modelo de regresión lineal. Proporciona la ecuación de regresión estimada. ¿Cómo se interpretan en este contexto los coeficientes de regresión?
+
+5. Obtén los residuales y elabora un diagrama de caja y brazos de los residuales. ¿Qué se puede inferir del diagrama?
+
+6. Grafica los residuales contra $\hat{Y}$, $X_1$, $X_2$, $X_3$ y $X_1 X_2$. Elabora también un QQ plot. Proporciona una interpretación.
+
+7. Grafica los residuales en el tiempo. ¿Se observa evidencia de correlación en los residuales?
+
+8. Realiza una prueba de Brown-Forsythe usando un $\alpha=0.01$. Expresa la regla de decisión y tu conclusión.
+
+
+## Ejercicio 02
+
+La masa muscular de una persona se espera que disminuya con la edad. Para explorar esta relación en mujeres, una nutrióloga selecciona aleatoriamente a 15 mujeres de cada grupo de edades por décadas, comenzado en la edad 40 y terminando en la edad 79. $X$ es la edad y $Y$ es la medida de masa muscular. Supón que el modelo de regresión lineal simple es apropiado.
+
+1. Obtén la función de regresión estimada. Grafica la función de regresión y los datos. ¿Te parece que la regresión lineal tenga un buen ajuste? ¿El gráfico apoya la hipótesis de que la masa muscular decrece con la edad?
+	
+2. Obtén lo siguiente: 1) un estimador puntual de la diferencia en la media de la masa muscular para las mujeres con diferencias de 1 año de edad; 2) un estimador puntual de la media de la masa muscular para mujeres de 60 años de edad; 3) el valor del residual para el 8avo. caso; 4) un estimador puntual de $\sigma^2$.
+
+3. Contruye un Q-Q plot de los residuales. Calcula el coeficiente de correlación entre los residuales ordenados y sus valores esperados conforme a una distribución normal para determinar si el supuesto de normalidad se sostiene en este caso. Utiliza la tabla B.6 y un $\alpha=0.1$. ¿Cuál es tu conclusión?
+
+
+## Ejercicio 03
+
+Se llevó a cabo un estudio de la relación que existe entre la cantidad de grasa corporal (variable respuesta) y el grosor del pliegue del triceps, la circunferencia del muslo y la circunferencia del antebrazo (variables explicativas). Se realizaron mediciones en 20 mujeres saludables de entre 25 y 34 años de edad. Dado que el procedimiento de medición de la cantidad de grasa corporal es complejo y sujeto a error, se desea ajustar un modelo de regresión lineal múltiple para poder realizar estimaciones futuras.
+
+1. Ajusta el modelo de regresión lineal múltiple correspondiente.
+
+2. Ajusta un modelo de regresión lineal simple para cada una de las variables explicativas. Obtén el $SSR$ de cada una de las regresiones.
+
+3. Calcula $SSR_{Triceps,Thigh}$.
+
+4. Calcula $SSR_{Thigh | Triceps}$.
+
+5. Calcula $SSR_{Midarm | Triceps,Thigh}$.
+
+6. Se desea verificar si la variable correspondiente al antebrazo se puede eliminar del análisis. Realiza un análisis $ANOVA$ y la prueba $F$ correspondiente y determina si existe evidencia estadística que permita eliminar a la variable.
+
+7. Se te pide ahora evaluar la posibilidad de eliminar tanto la variable correspondiente a las mediciones del antebrazo como la variable correspondiente a las mediciones del muslo. Realiza la prueba correspondiente, nuevamente considerando un $\alpha=0.01$ y argumenta tu conclusión.
+
+8. Completa la tabla que se muestra a continuación con los valores de los coeficientes de regresión estimados al incluir las variables señaladas en la primera columna. ¿Qué observas en los estimadores de los coeficientes?¿Son estables o inestables? ¿Qué significa que los coeficientes sean estables o inestables?
+
+9. Se desea ahora formalmente probar si las interacciones entre las variables deberían ser agregadas al modelo.
+
+    a. Plantea el modelo completo con interacciones.
+  
+    b. Calcula la matriz de correlaciones del modelo con interacciones.
+  
+    c. Ajusta el modelo lineal con las variables de interacción. Considera las variables explicativas centradas (i.e., centra las variables explicativas y vuelve a calcular las interacciones). Describe brevemente los resultados del ajuste del modelo.
+  
+    d. ¿Cuál es la relación entre las variables principales y las interacciones? ¿Se refuerzan o se contrarrestan?
+  
+    e. Obtén las sumas de cuadrados de la regresión (SSR) marginales de las variables del modelo con interacciones.
+  
+    f. Realiza una prueba F para determinar si es apropiado retirar las variables de interacción del modelo. Plantea las hipótesis de la prueba, el criterio de descarte y los resultados de la prueba. Utiliza un nivel de prueba del 0.05.
+  
+10. Calcula la matriz de correlaciones lineales entre las variables explicativas. Interpreta tus resultados.
+
+11. Calcula los factores de inflación de varianzas. ¿Qué puedes concluir respecto de la multicolinealidad de las variables? ¿Es esto consistente con el resultado obtenido en la pregunta anterior?
+
+
+
+
