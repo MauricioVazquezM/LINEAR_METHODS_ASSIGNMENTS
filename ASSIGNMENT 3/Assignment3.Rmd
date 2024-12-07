@@ -21,8 +21,9 @@ library(knitr)
 library(caret)
 library(dplyr)
 library(gridExtra)
-library(jpeg) 
-library(grid)
+library(reshape2) 
+library(corrplot)
+library(ggcorrplot)
 ```
 
 ## Ejercicio 01
@@ -38,19 +39,183 @@ Las variables acopiadas son:
 
 1. Elabora los diagramas de caja y brazos de las variables explicativas. ¿Se pueden observar datos atípicos? ¿Existen espacios (gaps) sin observaciones?
 
+```{r fig.align='center', fig.width=6, fig.height=4, echo=FALSE}
+# Lectura de datos
+datos_1 <- read.table(file = 'datos_prob_1.txt', 
+                      sep = '\t', 
+                      header =FALSE,
+                      col.names = c('Y','X_1','X_2','X_3'))
+
+# Plos de caja y brazos
+c1 <- ggplot(data = datos_1) +
+  aes(x = X_1) +
+  geom_boxplot(mapping = aes(y = 'X_1')) +
+  labs(title = "Paquetes distribuidos", x="Valor", y="") +
+  theme_minimal()
+
+c2 <- ggplot(data = datos_1) +
+  aes(x = X_2) +
+  geom_boxplot(mapping = aes(y = 'X_2')) +
+  labs(title = "Costos indirectos", x="Valor", y="") +
+  theme_minimal()
+
+# Histogramas
+h1 <-  ggplot(data = datos_1) +
+  aes(x = X_1) +
+  geom_histogram(bins = 50) +
+  labs(title = "Paquetes distribuidos", x="Valor", y="Frecuencia") +
+  theme_minimal()
+
+h2 <- ggplot(data = datos_1) +
+  aes(x = X_2) +
+  geom_histogram(bins = 50) +
+  labs(title = "Costos indirectos", x="Valor", y="Frecuencia") +
+  theme_minimal()
+
+# Conteo por catergoria
+c3 <- ggplot(data = datos_1) +
+  aes(x = factor(X_3)) +
+  geom_bar() +
+  labs(title = "Semana con dias feriados", x ="Días feriados (1) o no (0)", y="Conteo") +
+  theme_minimal()
+
+# Mostrar ambos gráficos en un solo layout
+grid.arrange(c1, c2, h1, h2, c3, ncol = 2)
+
+```
+
+Como podemos observar en los boxplots, se pueden ver datos atípicos en el gráfico correspondiente a la variable $X_1$ (Paquetes distribuidos). Existen puntos fuera de los límites del rango intercuartílico (IQR), indicando valores inusualmente altos. Por su parte, en la variable $X_2$ (Costos indirectos), tambien se puede observar datos fuera del $IQR$, es decir, datos atípicos. 
+
+Por otro lado, se puede analizar que, en fecto, hay espacios sin observaciones en ambas variables mencionadas previamente. Además, se puede observar que hay un desequilibrio en las frecuencias entre semanas con días feriados (1) y semanas sin días feriados (0).
+
+<br>
+
 2. Los datos son proporcionados en orden cronológico. ¿Qué se observa en las gráficas cronológicas?
+
+```{r fig.align='center', fig.width=7, fig.height=5, echo=FALSE}
+# Graficos de dispersion
+d1 <- ggplot(data = datos_1) +
+  aes(x = 1:52, y = X_1) +
+  geom_point() +
+  labs(title = "Paquetes distribuidos por semana", x="Semana", y="Valor") +
+  theme_classic()
+
+d2 <- ggplot(data = datos_1) +
+  aes(x = 1:52, y = X_2) +
+  geom_point() +
+  labs(title = "Costos indirectos por semana", x="Semana", y="Valor") +
+  theme_classic()
+
+d3 <- ggplot(data = datos_1) +
+  aes(x = 1:52, y = X_3) +
+  geom_point() +
+  labs(title = "Semana con dias feriados", x="Semana", y="Valor") +
+  theme_classic()
+
+# Mostrar gráficos en un solo layout
+grid.arrange(d1, d2, d3 , ncol = 2)
+```
+
+  * Se observa una tendencia creciente a lo largo del tiempo. El número de paquetes distribuidos incrementa progresivamente, especialmente a partir de la semana 30. Esto podría indicar un aumento en la actividad operativa..
+  * Los costos indirectos no muestran una tendencia clara, aunque parecen oscilar dentro de un rango constante (entre 5 y 9). Esto sugiere que los costos indirectos no están correlacionados directamente con el tiempo.
+  * Los días feriados (valor 1) son pocos y están dispersos en el tiempo, mientras que la mayoría de las semanas no tienen días feriados (valor 0)
+
+<br>
 
 3. Obtén las gráficas de dispersión de los datos y la matriz de correlaciones. ¿Qué se puede deducir de estas gráficas y matriz?
 
+```{r fig.align='center', fig.width=4, fig.height=4, echo=FALSE}
+# Dataset reducido
+datos_1$X_3 <- as.factor(datos_1$X_3)
+numerical_vars <- datos_1[, c('Y','X_1','X_2')]
+
+# Creando el pairs plot 
+ggpairs(
+  numerical_vars,
+  lower = list(continuous = "points"),
+  diag = list(continuous = "densityDiag"), 
+  upper = list(continuous = "cor"),    
+  aes(color = datos_1$X_3, alpha = 0.7) 
+) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 14, face = "bold"), 
+    axis.title = element_text(size = 12),               
+    axis.text = element_text(size = 10), 
+    axis.text.x = element_text(angle = 90, hjust = 1),
+    axis.text.y = element_text(angle = 0), 
+    legend.position = "top"                             
+  ) +
+  labs(title = "Analisis de correlación (por semana)", color = "Semana con dia feriado o no")
+```
+
+- Las semanas con días feriados ($X_3 = 1$) parecen tener relaciones más fuertes entre las variables, especialmente entre $Y$ y $X_1$ y entre $Y$ y $X_2$.
+- Las distribuciones de las variables cambian significativamente dependiendo de si hubo días feriados.
+
+<br>
+
 4. Estima el modelo de regresión lineal. Proporciona la ecuación de regresión estimada. ¿Cómo se interpretan en este contexto los coeficientes de regresión?
+
+```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
+# Lectura de datos
+datos_1 <- read.table(file = 'datos_prob_1.txt', 
+                      sep = '\t', 
+                      header =FALSE,
+                      col.names = c('Y','X_1','X_2','X_3'))
+
+# Estimar el modelo de regresión lineal
+modelo_1 <- lm(Y ~ X_1 + X_2 + X_3, data = datos_1)
+coeficientes <- coef(modelo_1)
+
+# Intercepto
+intercepto <- coeficientes["(Intercept)"]
+
+# Coeficiente de X_1
+coef_X1 <- coeficientes["X_1"]
+
+# Coeficiente de X_2
+coef_X2 <- coeficientes["X_2"]
+
+# Coeficiente de X_3
+coef_X3 <- coeficientes["X_3"]
+```
+
+La ecuación estimada es:
+
+\[
+\hat{Y} = `r round(intercepto, 2)` + `r round(coef_X1, 3)` X_1 + `r round(coef_X2, 4)` X_2 + `r round(coef_X3, 2)` X_3
+\]
+
+* $\beta_0 = `r round(intercepto, 3)`$: Este es el intercepto, que representa las horas trabajadas cuando $X_1$, $X_2$, y $X_3$ son 0.
+* $\beta_1 = `r round(coef_X1, 3)`$: Por cada paquete adicional distribuido ($X_1$), se espera que $Y$ (horas trabajadas) aumente en promedio `r round(coef_X1, 3)` horas, manteniendo constantes $X_2$ y $X_3$.
+* $\beta_2 = `r round(coef_X2, 4)`$: Por cada incremento del 1% en los costos indirectos ($X_2$), se espera que $Y$ aumente en promedio `r round(coef_X2, 3)` horas, manteniendo constantes $X_1$ y $X_3$.
+* $\beta_3 = `r round(coef_X3, 3)`$: Durante semanas con días feriados ($X_3 = 1$), se espera que $Y$ aumente en promedio `r round(coef_X3, 2)` horas en comparación con semanas sin días feriados ($X_3 = 0$), manteniendo constantes $X_1$ y $X_2$.
+
+<br>
 
 5. Obtén los residuales y elabora un diagrama de caja y brazos de los residuales. ¿Qué se puede inferir del diagrama?
 
+```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
+
+```
+
 6. Grafica los residuales contra $\hat{Y}$, $X_1$, $X_2$, $X_3$ y $X_1 X_2$. Elabora también un QQ plot. Proporciona una interpretación.
+
+```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
+
+```
 
 7. Grafica los residuales en el tiempo. ¿Se observa evidencia de correlación en los residuales?
 
+```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
+
+```
+
 8. Realiza una prueba de Brown-Forsythe usando un $\alpha=0.01$. Expresa la regla de decisión y tu conclusión.
+
+```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
+
+```
 
 
 ## Ejercicio 02
@@ -58,10 +223,22 @@ Las variables acopiadas son:
 La masa muscular de una persona se espera que disminuya con la edad. Para explorar esta relación en mujeres, una nutrióloga selecciona aleatoriamente a 15 mujeres de cada grupo de edades por décadas, comenzado en la edad 40 y terminando en la edad 79. $X$ es la edad y $Y$ es la medida de masa muscular. Supón que el modelo de regresión lineal simple es apropiado.
 
 1. Obtén la función de regresión estimada. Grafica la función de regresión y los datos. ¿Te parece que la regresión lineal tenga un buen ajuste? ¿El gráfico apoya la hipótesis de que la masa muscular decrece con la edad?
+
+```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
+
+```
 	
 2. Obtén lo siguiente: 1) un estimador puntual de la diferencia en la media de la masa muscular para las mujeres con diferencias de 1 año de edad; 2) un estimador puntual de la media de la masa muscular para mujeres de 60 años de edad; 3) el valor del residual para el 8avo. caso; 4) un estimador puntual de $\sigma^2$.
 
+```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
+
+```
+
 3. Contruye un Q-Q plot de los residuales. Calcula el coeficiente de correlación entre los residuales ordenados y sus valores esperados conforme a una distribución normal para determinar si el supuesto de normalidad se sostiene en este caso. Utiliza la tabla B.6 y un $\alpha=0.1$. ¿Cuál es tu conclusión?
+
+```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
+
+```
 
 
 ## Ejercicio 03
@@ -70,37 +247,101 @@ Se llevó a cabo un estudio de la relación que existe entre la cantidad de gras
 
 1. Ajusta el modelo de regresión lineal múltiple correspondiente.
 
+```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
+
+```
+
 2. Ajusta un modelo de regresión lineal simple para cada una de las variables explicativas. Obtén el $SSR$ de cada una de las regresiones.
+
+```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
+
+```
 
 3. Calcula $SSR_{Triceps,Thigh}$.
 
+```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
+
+```
+
 4. Calcula $SSR_{Thigh | Triceps}$.
+
+```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
+
+```
 
 5. Calcula $SSR_{Midarm | Triceps,Thigh}$.
 
+```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
+
+```
+
 6. Se desea verificar si la variable correspondiente al antebrazo se puede eliminar del análisis. Realiza un análisis $ANOVA$ y la prueba $F$ correspondiente y determina si existe evidencia estadística que permita eliminar a la variable.
+
+```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
+
+```
 
 7. Se te pide ahora evaluar la posibilidad de eliminar tanto la variable correspondiente a las mediciones del antebrazo como la variable correspondiente a las mediciones del muslo. Realiza la prueba correspondiente, nuevamente considerando un $\alpha=0.01$ y argumenta tu conclusión.
 
+```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
+
+```
+
 8. Completa la tabla que se muestra a continuación con los valores de los coeficientes de regresión estimados al incluir las variables señaladas en la primera columna. ¿Qué observas en los estimadores de los coeficientes?¿Son estables o inestables? ¿Qué significa que los coeficientes sean estables o inestables?
+
+```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
+
+```
 
 9. Se desea ahora formalmente probar si las interacciones entre las variables deberían ser agregadas al modelo.
 
     a. Plantea el modelo completo con interacciones.
+    
+```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
+
+```
   
     b. Calcula la matriz de correlaciones del modelo con interacciones.
+    
+```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
+
+```
   
     c. Ajusta el modelo lineal con las variables de interacción. Considera las variables explicativas centradas (i.e., centra las variables explicativas y vuelve a calcular las interacciones). Describe brevemente los resultados del ajuste del modelo.
+    
+```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
+
+```
   
     d. ¿Cuál es la relación entre las variables principales y las interacciones? ¿Se refuerzan o se contrarrestan?
+    
+```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
+
+```
   
     e. Obtén las sumas de cuadrados de la regresión (SSR) marginales de las variables del modelo con interacciones.
+    
+```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
+
+```
   
     f. Realiza una prueba F para determinar si es apropiado retirar las variables de interacción del modelo. Plantea las hipótesis de la prueba, el criterio de descarte y los resultados de la prueba. Utiliza un nivel de prueba del 0.05.
+    
+```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
+
+```
   
 10. Calcula la matriz de correlaciones lineales entre las variables explicativas. Interpreta tus resultados.
 
+```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
+
+```
+
 11. Calcula los factores de inflación de varianzas. ¿Qué puedes concluir respecto de la multicolinealidad de las variables? ¿Es esto consistente con el resultado obtenido en la pregunta anterior?
+
+```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
+
+```
 
 
 
