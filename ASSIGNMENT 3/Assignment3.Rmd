@@ -195,13 +195,91 @@ La ecuación estimada es:
 
 5. Obtén los residuales y elabora un diagrama de caja y brazos de los residuales. ¿Qué se puede inferir del diagrama?
 
-```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
+```{r fig.align='center', fig.width=2.5, fig.height=2.5, echo=FALSE}
+# Calcular los residuales
+residuales <- residuals(modelo_1)
 
+# Df auxiliar
+residuales_df <- data.frame(Residuales = residuales)
+
+# Diagrama de caja y brazos
+ggplot(residuales_df, aes(y = Residuales)) +
+  geom_boxplot(color = "black") +
+  labs(
+    title = "Boxplot de residuales",
+    y = "Residuales"
+  ) +
+  theme_minimal()
 ```
+
+En primer lugar, se puede observar que los residuales parecen estar centrados en torno a 0, lo que sugiere que el modelo no tiene un sesgo, al menos de forma evidente. En segundo lugar, la caja y los brazos son aproximadamente simétricos, indicando que la distribución de los residuales es cercana a una distribución normal. Por último, podemos analizar que el rango intercuartílico, es razonablemente amplio. Esto indica una variación moderada en los residuales.
+
+<br>
 
 6. Grafica los residuales contra $\hat{Y}$, $X_1$, $X_2$, $X_3$ y $X_1 X_2$. Elabora también un QQ plot. Proporciona una interpretación.
 
-```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
+```{r fig.align='center', fig.width=8, fig.height=5, echo=FALSE}
+# Residuales y valores ajustados
+residuales <- residuals(modelo_1)
+valores_ajustados <- fitted(modelo_1)
+
+# variable X_1 * X_2
+datos_1$X1_X2 <- datos_1$X_1 * datos_1$X_2
+
+# DF auxiliar
+residuals_df <- data.frame(
+  Residuales = residuales,
+  ValoresAjustados = valores_ajustados,
+  X_1 = datos_1$X_1,
+  X_2 = datos_1$X_2,
+  X_3 = datos_1$X_3,
+  X1_X2 = datos_1$X1_X2
+)
+
+# Plot residuales vs valores ajustados
+plot1 <- ggplot(residuals_df, aes(x = Residuales, y = ValoresAjustados)) +
+  geom_point(alpha = 0.7) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
+  labs(title = "vs. Valores Ajustados", x = "Residuales", y = "Y_hat") +
+  theme_minimal()
+
+# Plot residuales vs X_1
+plot2 <- ggplot(residuals_df, aes(x = Residuales, y = X_1)) +
+  geom_point(alpha = 0.7) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
+  labs(title = "vs. X_1", x = "Residuales", y = "X_1") +
+  theme_minimal()
+
+# Plot residuales vs X_2
+plot3 <- ggplot(residuals_df, aes(x = Residuales, y = X_2)) +
+  geom_point(alpha = 0.7) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
+  labs(title = "vs. X_2", x = "Residuales", y = "X_2") +
+  theme_minimal()
+
+# Plot residuales vs X_3
+plot4 <- ggplot(residuals_df, aes(x = Residuales, y = X_3)) +
+  geom_point(alpha = 0.7) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
+  labs(title = "vs. X_3", x = "Residuales", y = "X_3") +
+  theme_minimal()
+
+# Plot residuales vs X_1 * X_2
+plot5 <- ggplot(residuals_df, aes(x = Residuales, y = X1_X2)) +
+  geom_point(alpha = 0.7) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
+  labs(title = "vs. X_1 * X_2", x = "Residuales", y = "X_1 * X_2") +
+  theme_minimal()
+
+# QQ Plot
+plot6 <- ggplot(residuals_df, aes(sample = Residuales)) +
+  stat_qq() +
+  stat_qq_line(color = "red") +
+  labs(title = "QQ Plot Residuales", x = "Cuantiles Teóricos", y = "Cuantiles Residuales") +
+  theme_minimal()
+
+# Grid
+grid.arrange(plot1, plot2, plot3, plot4, plot5, plot6, ncol = 3)
 
 ```
 

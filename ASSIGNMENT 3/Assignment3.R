@@ -64,4 +64,62 @@ d3 <- ggplot(data = datos_1) +
 # Mostrar gráficos en un solo layout
 grid.arrange(d1, d2, d3 , ncol = 2)
 
+# Dataset reducido
+datos_1$X_3 <- as.factor(datos_1$X_3)
+numerical_vars <- datos_1[, c('Y','X_1','X_2')]
 
+# Creando el pairs plot 
+ggpairs(
+  numerical_vars,
+  lower = list(continuous = "points"),
+  diag = list(continuous = "densityDiag"), 
+  upper = list(continuous = "cor"),    
+  aes(color = datos_1$X_3, alpha = 0.7) 
+) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 14, face = "bold"), 
+    axis.title = element_text(size = 12),               
+    axis.text = element_text(size = 10), 
+    axis.text.x = element_text(angle = 90, hjust = 1),
+    axis.text.y = element_text(angle = 0), 
+    legend.position = "top"                             
+  ) +
+  labs(title = "Analisis de correlación (por semana)", color = "Semana con dia feriado o no")
+
+# Lectura de datos
+datos_1 <- read.table(file = 'datos_prob_1.txt', 
+                      sep = '\t', 
+                      header =FALSE,
+                      col.names = c('Y','X_1','X_2','X_3'))
+
+# Estimar el modelo de regresión lineal
+modelo_1 <- lm(Y ~ X_1 + X_2 + X_3, data = datos_1)
+coeficientes <- coef(modelo_1)
+
+# Intercepto
+intercepto <- coeficientes["(Intercept)"]
+
+# Coeficiente de X_1
+coef_X1 <- coeficientes["X_1"]
+
+# Coeficiente de X_2
+coef_X2 <- coeficientes["X_2"]
+
+# Coeficiente de X_3
+coef_X3 <- coeficientes["X_3"]
+
+# Calcular los residuales
+residuales <- residuals(modelo_1)
+
+# Df auxiliar
+residuales_df <- data.frame(Residuales = residuales)
+
+# Diagrama de caja y brazos
+ggplot(residuales_df, aes(y = Residuales)) +
+  geom_boxplot(color = "black") +
+  labs(
+    title = "Boxplot de residuales",
+    y = "Residuales"
+  ) +
+  theme_minimal()
