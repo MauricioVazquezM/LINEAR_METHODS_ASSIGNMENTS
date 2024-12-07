@@ -1,0 +1,26 @@
+---
+title: 'Tarea 4: Estadistica Aplicada II'
+author: "Mauricio Vazquez"
+date: '2024-12-11'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, tidy = TRUE, fig.width=10)
+
+# Libraries
+library(MASS)  
+library(ggplot2)
+library(GGally)
+library(mclust)
+library(kableExtra)
+library(FactoMineR)
+library(knitr)
+library(caret)
+library(dplyr)
+library(gridExtra)
+library(jpeg) 
+library(grid)
+```
+
+## Ejercicio 01
