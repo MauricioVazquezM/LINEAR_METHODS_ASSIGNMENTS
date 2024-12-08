@@ -227,3 +227,65 @@ t.star.bf.p.value <- pt(q = t.star.bf, df = nrow(datos_1)-2, lower.tail = FALSE)
 
 
 ##### Problema 2 #####
+# Lectura de datos
+datos_2 <-read.table(file = 'datos_prob_2.txt', 
+                     sep = '|', 
+                     header = FALSE, 
+                     col.names = c('Masa', 'Edad'))
+
+
+
+# Modelo de regresion multiple
+modelo_2 <- lm(data = datos_2, formula = Masa ~ Edad)
+
+# Summariy del modelo
+summary(modelo_2)
+
+# Gráfico de regresión
+ggplot(data = datos_2) + 
+  aes(x = Edad, y = Masa) +
+  geom_point() +
+  geom_smooth(method = 'lm', formula = y ~ x, se = TRUE) +
+  theme_bw() +
+  labs(title = "Gráfico de Regresión")
+
+# Coeficientes
+coeficientes <- coef(modelo_2)
+intercepto <- coeficientes["(Intercept)"]
+coef_edad <- coeficientes["Edad"]
+
+# R-cuadrada y valor-p
+pvalor <- summary(modelo_2)$fstatistic[1]  
+gl <- summary(modelo_2)$fstatistic[2:3]
+p_valor <- pf(q = pvalor, df1 = gl[1], df2 = gl[2], lower.tail = FALSE)
+r2 <- summary(modelo_2)$r.squared
+
+# para 60 años
+y.gorro.60 <- modelo_2$coefficients[1] + modelo_2$coefficients[2]*60
+
+# Residual del 8vo caso
+residuales <- residuals(modelo_2)
+residual8 <- residuales[8]
+
+# Estimador puntual sigma**2
+sigma.2.gorro <- sum(modelo_2$residuals^2)/(nrow(datos_2)-2)
+
+# Calcular los residuales
+residuales <- residuals(modelo_2)
+
+# Df auxiliar
+residuales_df <- data.frame(Residuales = residuales)
+
+# QQ Plot
+ggplot(residuals_df, aes(sample = Residuales)) +
+  stat_qq() +
+  stat_qq_line(color = "red") +
+  labs(title = "QQ Plot Residuales", x = "Cuantiles Teóricos", y = "Cuantiles Residuales") +
+  theme_minimal()
+
+# Supuesto de normalidad
+ranking <- rank(modelo_2$residuals, ties.method = 'first')
+valor.esperado <- sqrt(59) * sd(modelo_2$residuals) / sqrt(58) * qnorm(p = (ranking - 0.375)/(60 + 0.25))
+correlacion <- cor(x = modelo_2$residuals, y = valor.esperado)
+
+##### Pregunta 3 #####

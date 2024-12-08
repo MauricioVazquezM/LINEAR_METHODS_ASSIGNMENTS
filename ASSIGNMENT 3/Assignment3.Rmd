@@ -353,22 +353,106 @@ La masa muscular de una persona se espera que disminuya con la edad. Para explor
 
 1. Obtén la función de regresión estimada. Grafica la función de regresión y los datos. ¿Te parece que la regresión lineal tenga un buen ajuste? ¿El gráfico apoya la hipótesis de que la masa muscular decrece con la edad?
 
-```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
+```{r fig.align='center', fig.width=4, fig.height=3, echo=FALSE}
+# Lectura de datos
+datos_2 <-read.table(file = 'datos_prob_2.txt', 
+                   sep = '|', 
+                   header = FALSE, 
+                   col.names = c('Masa', 'Edad'))
 
+
+
+# Modelo de regresion multiple
+modelo_2 <- lm(data = datos_2, formula = Masa ~ Edad)
+
+# Summariy del modelo
+summary(modelo_2)
+
+# Gráfico de regresión
+ggplot(data = datos_2) + 
+  aes(x = Edad, y = Masa) +
+  geom_point() +
+  geom_smooth(method = 'lm', formula = y ~ x, se = TRUE) +
+  theme_bw() +
+  labs(title = "Gráfico de Regresión")
+
+# Coeficientes
+coeficientes <- coef(modelo_2)
+intercepto <- coeficientes["(Intercept)"]
+coef_edad <- coeficientes["Edad"]
+
+# R-cuadrada y valor-p
+pvalor <- summary(modelo_2)$fstatistic[1]  
+gl <- summary(modelo_2)$fstatistic[2:3]
+p_valor <- pf(q = pvalor, df1 = gl[1], df2 = gl[2], lower.tail = FALSE)
+r2 <- summary(modelo_2)$r.squared
 ```
+
+La ecuación estimada es:
+
+\[
+\hat{Y} = `r round(intercepto, 2)` + `r round(coef_edad, 2)` X_{Edad}
+\]
+
+Desde mi perspectiva, la regresión lineal tiene un buen ajuste, y el plot apoya la hipótesis de que la masa muscular disminuye con la edad. Esto se confirma tanto por los indicadores estadísticos ($R^2= `r round(r2, 4)`$ y $p_{value}= `r round(p_valor, 7)`$, ambos significativo) como por el plot de los datos.
+
+<br>
 	
 2. Obtén lo siguiente: 1) un estimador puntual de la diferencia en la media de la masa muscular para las mujeres con diferencias de 1 año de edad; 2) un estimador puntual de la media de la masa muscular para mujeres de 60 años de edad; 3) el valor del residual para el 8avo. caso; 4) un estimador puntual de $\sigma^2$.
 
-```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
+\begin{align*}
+E[Y_{k+1} - Y_k] &= E[\beta_0 + \beta_1 X_k + \epsilon_k - \beta_0 - \beta_1 X_{k-1} - \epsilon_{k-1}] \\
+&= E[\beta_1 X_k + \epsilon_k - \beta_1 X_{k-1} - \epsilon_{k-1}] \\
+&= E[\beta_1 (X_k - X_{k-1}) + \epsilon_k - \epsilon_{k-1}] \\
+&= E[\beta_1] + E[\epsilon_k - \epsilon_{k-1}] \\
+&= \beta_1
+\end{align*}
 
+```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
+# para 60 años
+y.gorro.60 <- modelo_2$coefficients[1] + modelo_2$coefficients[2]*60
+
+# Residual del 8vo caso
+residuales <- residuals(modelo_2)
+residual8 <- residuales[8]
+
+# Estimador puntual sigma**2
+sigma.2.gorro <- sum(modelo_2$residuals^2)/(nrow(datos_2)-2)
 ```
+
+* Un estimador puntual de la media de la masa muscular para mujeres de 60 años de edad: $\hat{Y_{60}} = `r round(y.gorro.60, 4)`$.
+
+* Valor del residual para el 8avo. caso: $Residual = `r round(residual8, 4)`$.
+
+* Estimador puntual de $\sigma^2 = `r round(sigma.2.gorro, 4)`$.
+
+<br>
 
 3. Contruye un Q-Q plot de los residuales. Calcula el coeficiente de correlación entre los residuales ordenados y sus valores esperados conforme a una distribución normal para determinar si el supuesto de normalidad se sostiene en este caso. Utiliza la tabla B.6 y un $\alpha=0.1$. ¿Cuál es tu conclusión?
 
-```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
+```{r fig.align='center', fig.width=4, fig.height=4, echo=FALSE}
+# Calcular los residuales
+residuales <- residuals(modelo_2)
 
+# Df auxiliar
+residuales_df <- data.frame(Residuales = residuales)
+
+# QQ Plot
+ggplot(residuals_df, aes(sample = Residuales)) +
+  stat_qq() +
+  stat_qq_line(color = "red") +
+  labs(title = "QQ Plot Residuales", x = "Cuantiles Teóricos", y = "Cuantiles Residuales") +
+  theme_minimal()
+
+# Supuesto de normalidad
+ranking <- rank(modelo_2$residuals, ties.method = 'first')
+valor.esperado <- sqrt(59) * sd(modelo_2$residuals) / sqrt(58) * qnorm(p = (ranking - 0.375)/(60 + 0.25))
+correlacion <- cor(x = modelo_2$residuals, y = valor.esperado)
 ```
 
+Para un total de 60 observaciones, según la tabla de valores críticos de Looney y Gulledge (1985), el valor crítico correspondiente a un nivel de significancia $\alpha = 0.10$ es 0.984. Recordar que la hipótesis nula de esta prueba establece que los datos siguen una distribución normal. Dado que la correlación observada supera el valor crítio, no se encuentra evidencia suficiente para rechazar la hipótesis nula. Por lo tanto, se confirma que los datos presentan normalidad.
+
+\newpage
 
 ## Ejercicio 03
 
