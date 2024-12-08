@@ -239,35 +239,30 @@ residuals_df <- data.frame(
 # Plot residuales vs valores ajustados
 plot1 <- ggplot(residuals_df, aes(x = Residuales, y = ValoresAjustados)) +
   geom_point(alpha = 0.7) +
-  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
   labs(title = "vs. Valores Ajustados", x = "Residuales", y = "Y_hat") +
   theme_minimal()
 
 # Plot residuales vs X_1
 plot2 <- ggplot(residuals_df, aes(x = Residuales, y = X_1)) +
   geom_point(alpha = 0.7) +
-  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
   labs(title = "vs. X_1", x = "Residuales", y = "X_1") +
   theme_minimal()
 
 # Plot residuales vs X_2
 plot3 <- ggplot(residuals_df, aes(x = Residuales, y = X_2)) +
   geom_point(alpha = 0.7) +
-  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
   labs(title = "vs. X_2", x = "Residuales", y = "X_2") +
   theme_minimal()
 
 # Plot residuales vs X_3
 plot4 <- ggplot(residuals_df, aes(x = Residuales, y = X_3)) +
   geom_point(alpha = 0.7) +
-  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
   labs(title = "vs. X_3", x = "Residuales", y = "X_3") +
   theme_minimal()
 
 # Plot residuales vs X_1 * X_2
 plot5 <- ggplot(residuals_df, aes(x = Residuales, y = X1_X2)) +
   geom_point(alpha = 0.7) +
-  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
   labs(title = "vs. X_1 * X_2", x = "Residuales", y = "X_1 * X_2") +
   theme_minimal()
 
@@ -283,18 +278,74 @@ grid.arrange(plot1, plot2, plot3, plot4, plot5, plot6, ncol = 3)
 
 ```
 
+* Residuales vs $\hat{Y}$: los residuales parecen dispersos de manera aleatoria en torno a 0.
+* Residuales vs $X_1$: los residuales están razonablemente dispersos alrededor de 0.
+* Residuales vs $X_2$: los residuales están razonablemente dispersos alrededor de 0, similar a en $X_1$. 
+* Residuales vs. $X_3$: los residuales están distribuidos simétricamente en torno a 0 para ambas categorías de $X_3$ (0 y 1).
+* Residuales vs. $X_1 \cdot X_2$: los residuales están razonablemente dispersos alrededor de 0, como en $X_1$.
+* QQ-plot: aunque los residuales son cercanos a una distribución normal, podría haber ligeras desviaciones en los valores extremos.
+
+<br>
+
 7. Grafica los residuales en el tiempo. ¿Se observa evidencia de correlación en los residuales?
 
-```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
+```{r fig.align='center', fig.width=5, fig.height=2.5, echo=FALSE}
+# Calcular los residuales
+residuales <- residuals(modelo_1)
 
+# Df auxiliar
+residuales_df <- data.frame(Residuales = residuales)
+
+# Scatterplot
+ggplot(residuales_df, aes(x = 1:52, y = Residuales)) +
+  geom_point(color = "black") +
+  labs(
+    title = "Residuales en el tiempo",
+    x= 'Semana',
+    y = "Residuales"
+  ) +
+  theme_minimal()
 ```
+
+Al analizar el plot obtenido, los residuales parecen estar distribuidos de manera aleatoria alrededor de 0 a lo largo de las semanas. Además, no se observa un patrón claro de tendencia creciente, decreciente o cíclica en los residuales. Por último, a manera de observación, la falta de un patrón sistemático en el gráfico sugiere que no hay evidencia significativa de correlación en los residuales.
+
+<br>
 
 8. Realiza una prueba de Brown-Forsythe usando un $\alpha=0.01$. Expresa la regla de decisión y tu conclusión.
 
 ```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
+# Residuales
+datos_1$residual <- modelo_1$residuals
 
+# Dividiendo grupo por la mediana
+grupo.1 <- datos_1[which(modelo_1$fitted.values <= median(modelo_1$fitted.values)),]
+grupo.2 <- datos_1[which(modelo_1$fitted.values > median(modelo_1$fitted.values)),]
+
+# Calculando medianas de cada grupo
+mediana.epsilon.gorro.1 <- median(grupo.1$residual)
+mediana.epsilon.gorro.2 <- median(grupo.2$residual)
+
+# Calculando los valores absolutos de las desviaciones respecto a la mediana
+grupo.1$d <- abs(grupo.1$residual-mediana.epsilon.gorro.1)
+grupo.2$d <- abs(grupo.2$residual-mediana.epsilon.gorro.2)
+
+# Calculando las medias de las desviaciones absolutas en cada grupo
+d.media.1 <- mean(grupo.1$d)
+d.media.2 <- mean(grupo.2$d)
+
+# Suma de cuadrados
+SSD <-(sum((grupo.1$d - d.media.1)^2) + sum((grupo.2$d - d.media.2)^2)) / (nrow(datos_1) - 2)
+
+# Calculando el estadisticod de prueba
+t.star.bf <- abs(d.media.1 - d.media.2)/sqrt(SSD*(1/nrow(grupo.1) + 1/nrow(grupo.2)))
+
+# Calculando el valor p
+t.star.bf.p.value <- pt(q = t.star.bf, df = nrow(datos_1)-2, lower.tail = FALSE)
 ```
 
+Dado que, bajo la hipótesis de varianzas constantes, la estadística de prueba sigue una distribución t, y considerando que el valor calculado de la estadística de prueba es $`r round(t.star.bf, 4)`$ y su correspondiente p-valor es $`r round(t.star.bf.p.value, 5)`$, el cual es menor que el nivel de significancia $\alpha = 0.01$, se rechaza la hipótesis nula. Esto nos permite concluir que existe evidencia suficiente para afirmar que las varianzas de los grupos no son homogéneas, lo que indica la presencia de heterocedasticidad en los datos.
+
+<br>
 
 ## Ejercicio 02
 

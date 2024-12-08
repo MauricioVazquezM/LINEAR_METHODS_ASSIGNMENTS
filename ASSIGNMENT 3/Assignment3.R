@@ -123,3 +123,107 @@ ggplot(residuales_df, aes(y = Residuales)) +
     y = "Residuales"
   ) +
   theme_minimal()
+
+# Residuales y valores ajustados
+residuales <- residuals(modelo_1)
+valores_ajustados <- fitted(modelo_1)
+
+# variable X_1 * X_2
+datos_1$X1_X2 <- datos_1$X_1 * datos_1$X_2
+
+# DF auxiliar
+residuals_df <- data.frame(
+  Residuales = residuales,
+  ValoresAjustados = valores_ajustados,
+  X_1 = datos_1$X_1,
+  X_2 = datos_1$X_2,
+  X_3 = datos_1$X_3,
+  X1_X2 = datos_1$X1_X2
+)
+
+# Plot residuales vs valores ajustados
+plot1 <- ggplot(residuals_df, aes(x = Residuales, y = ValoresAjustados)) +
+  geom_point(alpha = 0.7) +
+  labs(title = "vs. Valores Ajustados", x = "Residuales", y = "Y_hat") +
+  theme_minimal()
+
+# Plot residuales vs X_1
+plot2 <- ggplot(residuals_df, aes(x = Residuales, y = X_1)) +
+  geom_point(alpha = 0.7) +
+  labs(title = "vs. X_1", x = "Residuales", y = "X_1") +
+  theme_minimal()
+
+# Plot residuales vs X_2
+plot3 <- ggplot(residuals_df, aes(x = Residuales, y = X_2)) +
+  geom_point(alpha = 0.7) +
+  labs(title = "vs. X_2", x = "Residuales", y = "X_2") +
+  theme_minimal()
+
+# Plot residuales vs X_3
+plot4 <- ggplot(residuals_df, aes(x = Residuales, y = X_3)) +
+  geom_point(alpha = 0.7) +
+  labs(title = "vs. X_3", x = "Residuales", y = "X_3") +
+  theme_minimal()
+
+# Plot residuales vs X_1 * X_2
+plot5 <- ggplot(residuals_df, aes(x = Residuales, y = X1_X2)) +
+  geom_point(alpha = 0.7) +
+  labs(title = "vs. X_1 * X_2", x = "Residuales", y = "X_1 * X_2") +
+  theme_minimal()
+
+# QQ Plot
+plot6 <- ggplot(residuals_df, aes(sample = Residuales)) +
+  stat_qq() +
+  stat_qq_line(color = "red") +
+  labs(title = "QQ Plot Residuales", x = "Cuantiles Teóricos", y = "Cuantiles Residuales") +
+  theme_minimal()
+
+# Grid
+grid.arrange(plot1, plot2, plot3, plot4, plot5, plot6, ncol = 3)
+
+# Calcular los residuales
+residuales <- residuals(modelo_1)
+
+# Df auxiliar
+residuales_df <- data.frame(Residuales = residuales)
+
+# Scatterplot
+ggplot(residuales_df, aes(x = 1:52, y = Residuales)) +
+  geom_point(color = "black") +
+  labs(
+    title = "Residuales en el tiempo",
+    x= 'Semana',
+    y = "Residuales"
+  ) +
+  theme_minimal()
+
+# Residuales
+datos_1$residual <- modelo_1$residuals
+
+# Dividiendo grupo por la mediana
+grupo.1 <- datos_1[which(modelo_1$fitted.values <= median(modelo_1$fitted.values)),]
+grupo.2 <- datos_1[which(modelo_1$fitted.values > median(modelo_1$fitted.values)),]
+
+# Calculando medianas de cada grupo
+mediana.epsilon.gorro.1 <- median(grupo.1$residual)
+mediana.epsilon.gorro.2 <- median(grupo.2$residual)
+
+# Calculando los valores absolutos de las desviaciones respecto a la mediana
+grupo.1$d <- abs(grupo.1$residual-mediana.epsilon.gorro.1)
+grupo.2$d <- abs(grupo.2$residual-mediana.epsilon.gorro.2)
+
+# Calculando las medias de las desviaciones absolutas en cada grupo
+d.media.1 <- mean(grupo.1$d)
+d.media.2 <- mean(grupo.2$d)
+
+# Suma de cuadrados
+SSD <-(sum((grupo.1$d - d.media.1)^2) + sum((grupo.2$d - d.media.2)^2)) / (nrow(datos_1) - 2)
+
+# Calculando el estadisticod de prueba
+t.star.bf <- abs(d.media.1 - d.media.2)/sqrt(SSD*(1/nrow(grupo.1) + 1/nrow(grupo.2)))
+
+# Calculando el valor p
+t.star.bf.p.value <- pt(q = t.star.bf, df = nrow(datos_1)-2, lower.tail = FALSE)
+
+
+##### Problema 2 #####
