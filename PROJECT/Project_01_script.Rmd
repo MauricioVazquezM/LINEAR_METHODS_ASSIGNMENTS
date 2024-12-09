@@ -462,8 +462,68 @@ anova(object = modelo_of)
 
 <br>
 
-## Conclusiones
+## Conclusiones (Primera entrega)
 
 * Con un alto R-cuadrado y un buen ajuste, el modelo es bueno para predecir el rendimiento escolar en función de los puntajes previos. Esto indica que el historial de rendimiento tiene un impacto significativo en el rendimiento futuro. 
 * Por otro lado, aunque el modelo ajusta bien los datos, el rango de los residuos sugiere que existen algunas observaciones con mayores errores de predicción. Se considera que, para futuras iteraciones del proyecto, se debe examinar estos puntos. Lo cual puede resultar en comprender si hay factores adicionales que afectan el indice de rendimiento academico.
 
+
+\newpage
+
+## Ajuste de un modelo lineal múltiple
+
+En esta segunda iteración del proyecto, se incorporarán las demás variables previamente analizadas para enriquecer el modelo inicial y mejorar su capacidad predictiva. Este enfoque permitirá explorar de manera más integral las relaciones entre las variables predictoras y la variable objetivo. Como resultado, se plantea transformar el modelo original en un modelo de regresión lineal múltiple, lo que permitirá capturar, de manera más precisa, las interacciones y contribuciones de cada factor al rendimiento estudiantil.
+
+Una vez hecho este ejercicio, tenemos como resultado la siguiente ecuación:
+
+```{r fig.width=10, fig.height=4.5, echo=FALSE}
+# Modelo de regresión lineal múltiple
+modelo_m <- lm(performance_idx ~ hrs_studied + prev_scores + xtr_activities + sleep_hrs + sample_questions, data = data)
+
+# Extraer coeficientes del modelo
+coeficientes <- coef(modelo_m)
+
+# Construir la fórmula como texto
+intercept <- round(coeficientes[1], 3)
+coef_hrs_st <- round(coeficientes[2], 3)
+coef_p_scr <- round(coeficientes[3], 3)
+coef_xtr_act <- round(coeficientes[4], 3)
+coef_s_hrs <- round(coeficientes[5], 3)
+coef_s_ques <- round(coeficientes[6], 3)
+```
+
+\begin{align*}
+\hat{Y}_{\text{performance\_idx}} = `r intercept` &+ `r coef_hrs_st` \cdot X_{\text{hrs\_studied}} \\
+&+ `r coef_p_scr` \cdot X_{\text{prev\_scores}} \\ 
+&+ `r coef_xtr_act` \cdot X_{\text{xtr\_activities}} \\ 
+&+ `r coef_s_hrs` \cdot X_{\text{sleep\_hrs}} \\ 
+&+ `r coef_s_ques` \cdot X_{\text{sample\_questions}} \\
+&+ \epsilon
+\end{align*}
+
+```{r fig.width=10, fig.height=4.5, echo=FALSE}
+# Resumen del modelo
+summary(modelo_m)
+```
+
+***Interpretación***
+
+* $\beta_{0} = `r intercept`$: El valor predicho del índice de rendimiento cuando todas las variables predictoras son 0. En este caso, no puede ser interpretable en un contexto práctico. 
+* $\beta_{hrs-studied} = `r coef_hrs_st`$: Por cada hora adicional de estudio, el índice de rendimiento aumenta en promedio 2.85 puntos, manteniendo constantes las demás variables.
+* $\beta_{prev-scores} = `r coef_p_scr`$: Por cada punto adicional en los puntajes previos, el índice de rendimiento aumenta en promedio 1.01 puntos.
+* $\beta_{xtr-activites} = `r coef_xtr_act`$: Participar en actividades extracurriculares (frente a no participar) está asociado con un aumento promedio de 0.61 puntos en el índice de rendimiento. Aunque el efecto es pequeño, es estadísticamente significativo.
+* $\beta_{sleep-hours} = `r coef_s_hrs`$: Por cada hora adicional de sueño promedio por día, el índice de rendimiento aumenta en promedio 0.48 puntos, manteniendo constantes las demás variables.
+* $\beta_{sample-questions} = `r coef_s_ques`$: Por cada examen de práctica adicional, el índice de rendimiento aumenta en promedio 0.19 puntos. Aunque el efecto es menor en comparación con otras variables, sigue siendo estadísticamente significativo.
+
+Por otro lado, aunque se ya se menciono previamente arriba, todas las variables tienen valores de $p < 0.001$, lo que indica que sus coeficientes son estadísticamente significativos. Esto implica que todas las variables predictoras están asociadas con cambios significativos en el índice de rendimiento.
+
+En cuanto a $R^2_{ajustado} =  0.9887$, se sugiere que las variables predictoras incluidas son útiles para explicar la variabilidad en los datos. Agregando que $F_{statistic} = 1.757e+05$ con un $p_{value} < 2e-16$ que nos indica que el modelo completo (con todas las variables predictoras) es significativamente mejor que un modelo sin predictores (modelo nulo).
+
+### ANOVA
+
+```{r fig.width=10, fig.height=4.5, echo=FALSE}
+# Resumen del modelo
+anova(modelo_m)
+```
+
+Como se puede analizar en la ANOVA realizado, el predictor $prev-scores$ es la variable más importante en términos de contribución a la explicación de la variabilidad en $performance-idx$, lo que sugiere que el desempeño previo es el mayor predictor del rendimiento actual. Esto se repalda por lo analizado en el exploratorio de datos. Por su parte, $hrs-studied$ también tiene un impacto significativo, demostrando que las horas de estudio son un factor clave en el rendimiento académico. Aunque las variables $xtr-activities$, $sleep-hrs$ y $sample-questions$ son estadísticamente significativas, su impacto relativo es menor en comparación con las dos variables principales. Finalmente, la cantidad de variabilidad no explicada por el modelo (residuos) es muy baja, lo que respalda el alto $R^2 = 0.9888$ del modelo.

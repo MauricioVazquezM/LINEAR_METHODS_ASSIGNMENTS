@@ -219,3 +219,5 @@ ggplot(data = data_sample) +
 # Anova
 anova(object = modelo_of)
 
+
+
