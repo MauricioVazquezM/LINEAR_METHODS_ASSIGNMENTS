@@ -451,7 +451,7 @@ ggplot(data = data_sample) +
 
 <br>
 
-## ANOVA
+### ANOVA
 
 ```{r fig.width=10, fig.height=4.5, echo=FALSE}
 anova(object = modelo_of)
@@ -462,7 +462,7 @@ anova(object = modelo_of)
 
 <br>
 
-## Conclusiones (Primera entrega)
+### Conclusiones (Primera entrega)
 
 * Con un alto R-cuadrado y un buen ajuste, el modelo es bueno para predecir el rendimiento escolar en función de los puntajes previos. Esto indica que el historial de rendimiento tiene un impacto significativo en el rendimiento futuro. 
 * Por otro lado, aunque el modelo ajusta bien los datos, el rango de los residuos sugiere que existen algunas observaciones con mayores errores de predicción. Se considera que, para futuras iteraciones del proyecto, se debe examinar estos puntos. Lo cual puede resultar en comprender si hay factores adicionales que afectan el indice de rendimiento academico.
@@ -527,3 +527,7 @@ anova(modelo_m)
 ```
 
 Como se puede analizar en la ANOVA realizado, el predictor $prev-scores$ es la variable más importante en términos de contribución a la explicación de la variabilidad en $performance-idx$, lo que sugiere que el desempeño previo es el mayor predictor del rendimiento actual. Esto se repalda por lo analizado en el exploratorio de datos. Por su parte, $hrs-studied$ también tiene un impacto significativo, demostrando que las horas de estudio son un factor clave en el rendimiento académico. Aunque las variables $xtr-activities$, $sleep-hrs$ y $sample-questions$ son estadísticamente significativas, su impacto relativo es menor en comparación con las dos variables principales. Finalmente, la cantidad de variabilidad no explicada por el modelo (residuos) es muy baja, lo que respalda el alto $R^2 = 0.9888$ del modelo.
+
+### Diagnóstico del modelo 
+
+### Conclusiones finales
