@@ -461,14 +461,41 @@ Se llevó a cabo un estudio de la relación que existe entre la cantidad de gras
 1. Ajusta el modelo de regresión lineal múltiple correspondiente.
 
 ```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
+# Lectura de datos
+datos_3 <-read.table(file = 'datos_prob_3.txt', 
+                   sep = '|', 
+                   header = TRUE, 
+                   encoding = 'utf-8')
 
+#Ajuste de un modelo de regresion lineal multiple
+modelo_3 <- lm(data = datos_3, formula = Fat ~ Triceps + Thigh + Midarm)
+summary(modelo_3)
 ```
 
 2. Ajusta un modelo de regresión lineal simple para cada una de las variables explicativas. Obtén el $SSR$ de cada una de las regresiones.
 
 ```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
+# Modelo triceps
+modelo.3.1 <- lm(data = datos_3, formula = Fat ~ Triceps)
+anova.3.1 <- anova(object = modelo.3.1)
+a <- anova.3.1$`Sum Sq`[1]
 
+# Modelo muslo
+modelo.3.2 <- lm(data = datos_3, formula = Fat ~ Thigh)
+anova.3.2 <- anova(object = modelo.3.2)
+b <- anova.3.2$`Sum Sq`[1]
+
+# Modelo antebrazo
+modelo.3.3 <- lm(data = datos_3, formula = Fat ~ Midarm)
+anova.3.3 <- anova(object = modelo.3.3)
+c<- anova.3.3$`Sum Sq`[1]
 ```
+
+Como resultado de las tres diferentes regresiones imples, tenemos los siguientes $SSR$'s:
+
+* $SSR_{Triceps} = `r round(a, 4)`$
+* $SSR_{Muslo} = `r round(b, 4)`$
+* $SSR_{Antebrazo} = `r round(c, 4)`$
 
 3. Calcula $SSR_{Triceps,Thigh}$.
 
