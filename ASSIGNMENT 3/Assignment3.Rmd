@@ -472,6 +472,8 @@ modelo_3 <- lm(data = datos_3, formula = Fat ~ Triceps + Thigh + Midarm)
 summary(modelo_3)
 ```
 
+<br>
+
 2. Ajusta un modelo de regresión lineal simple para cada una de las variables explicativas. Obtén el $SSR$ de cada una de las regresiones.
 
 ```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
@@ -497,23 +499,43 @@ Como resultado de las tres diferentes regresiones imples, tenemos los siguientes
 * $SSR_{Muslo} = `r round(b, 4)`$
 * $SSR_{Antebrazo} = `r round(c, 4)`$
 
+<br>
+
 3. Calcula $SSR_{Triceps,Thigh}$.
 
 ```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
-
+# Modelo multiple con tricep y muslo
+model_t_m <- lm(data = datos_3, formula = Fat ~ Triceps + Thigh)
+anova_t_m <- anova(object = model_t_m)
+t_m <- sum(anova_t_m$`Sum Sq`[1:2])
 ```
+
+Respuesta: $SSR_{Triceps,Thigh} = `r round(t_m, 4)`$.
+
+<br>
 
 4. Calcula $SSR_{Thigh | Triceps}$.
 
 ```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
-
+# Modelo multiple thigh given triceps
+t_m2 <- anova_t_m$`Sum Sq`[2]
 ```
+
+Respuesta: $SSR_{Thigh | Triceps} = `r round(t_m2, 4)`$.
+
+<br>
 
 5. Calcula $SSR_{Midarm | Triceps,Thigh}$.
 
 ```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
-
+modelo_m_tt <- lm(data = datos_3, formula = Fat ~ Triceps + Thigh + Midarm)
+anova_m_tt <- anova(object = modelo_m_tt)
+k <- sum(anova_m_tt$`Sum Sq`[3])
 ```
+
+Respuesta: $SSR_{Midarm | Triceps,Thigh} = `r round(k, 4)`$.
+
+<br>
 
 6. Se desea verificar si la variable correspondiente al antebrazo se puede eliminar del análisis. Realiza un análisis $ANOVA$ y la prueba $F$ correspondiente y determina si existe evidencia estadística que permita eliminar a la variable.
 
