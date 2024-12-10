@@ -540,14 +540,36 @@ Respuesta: $SSR_{Midarm | Triceps,Thigh} = `r round(k, 4)`$.
 6. Se desea verificar si la variable correspondiente al antebrazo se puede eliminar del análisis. Realiza un análisis $ANOVA$ y la prueba $F$ correspondiente y determina si existe evidencia estadística que permita eliminar a la variable.
 
 ```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
+# Modelo completo 
+modelo_completo <- lm( data = datos_3, Fat ~ Triceps + Thigh + Midarm)
 
+# Modelo reducido 
+modelo_reducido <- lm( data = datos_3, Fat ~ Triceps + Thigh)
+
+# ANOVA
+anova(modelo_reducido, modelo_completo)
 ```
+
+Como podemos observar en la $ANOVA$, tenemos un $p_{value} = 0.1896$. Por lo tanto, a un nivel de significancia de $\alpha=0.01$, se concluye que la variable Midarm puede ser eliminada del modelo sin afectar significativamente su ajuste.
+
+<br>
 
 7. Se te pide ahora evaluar la posibilidad de eliminar tanto la variable correspondiente a las mediciones del antebrazo como la variable correspondiente a las mediciones del muslo. Realiza la prueba correspondiente, nuevamente considerando un $\alpha=0.01$ y argumenta tu conclusión.
 
 ```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
+# Modelo completo: Triceps, Thigh y Midarm
+modelo_completo <- lm(Fat ~ Triceps + Thigh + Midarm, data = datos_3)
 
+# Modelo reducido: Triceps
+modelo_reducido <- lm(Fat ~ Triceps, data = datos_3)
+
+# ANOVA
+anova(modelo_reducido, modelo_completo)
 ```
+
+Al igual que en la pregunta anterior, con un nivel de significancia $\alpha=0.01$, no existe evidencia estadística suficiente para justificar la inclusión de las variables Thigh y Midarm en el modelo. Por lo tanto, ambas pueden ser eliminadas del análisis. 
+
+<br>
 
 8. Completa la tabla que se muestra a continuación con los valores de los coeficientes de regresión estimados al incluir las variables señaladas en la primera columna. ¿Qué observas en los estimadores de los coeficientes?¿Son estables o inestables? ¿Qué significa que los coeficientes sean estables o inestables?
 
