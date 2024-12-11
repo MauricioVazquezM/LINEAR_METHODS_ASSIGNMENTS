@@ -641,41 +641,83 @@ Este comportamiento de los coeficientes es una indicación de cierta inestabilid
 
 9. Se desea ahora formalmente probar si las interacciones entre las variables deberían ser agregadas al modelo.
 
-    a. Plantea el modelo completo con interacciones.
-    
-\begin{align*}
+  a. Plantea el modelo completo con interacciones.
+
+\vspace{-5mm}
+\[
+\begin{aligned}
 Y = \beta_0 &+ \beta_{TR} X_{TR} + \beta_{TH} X_{TH} + \beta_{M} X_{M} \\
 &+ \beta_{TR|TH} X_{TR} X_{TH} + \beta_{TR|M} X_{TR} X_{M} \\
 &+ \beta_{TH|M} X_{TH} X_{M} + \epsilon 
-\end{align*}
+\end{aligned}
+\]
 
-<br>
+  b. Calcula la matriz de correlaciones del modelo con interacciones.
+
+\vspace{-15mm}
+
+```{r fig.align='center', fig.width=4.5, fig.height=4.5, echo=FALSE}
+# Creando las nuevas variables
+datos_3$TrTh <- datos_3$Triceps*datos_3$Thigh
+datos_3$TrM <- datos_3$Triceps*datos_3$Midarm
+datos_3$ThM <- datos_3$Thigh*datos_3$Midarm
+
+# Matriz de correlaciones
+cor_matrix <- round(cor(datos_3), 3)
+
+# Plot
+ggcorrplot(cor_matrix,
+           method = "circle",
+           type = "upper", 
+           lab = TRUE, 
+           lab_size = 3, 
+           colors = c("red", "white", "blue"))  
+```
+
+\vspace{-15mm}
+
+  c. Ajusta el modelo lineal con las variables de interacción. Considera las variables explicativas centradas (i.e., centra las variables explicativas y vuelve a calcular las interacciones). Describe brevemente los resultados del ajuste del modelo.
+    
+```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
+# Centrando
+datos_3$Triceps_c <- datos_3$Triceps - mean(datos_3$Triceps, na.rm = TRUE)
+datos_3$Thigh_c <- datos_3$Thigh - mean(datos_3$Thigh, na.rm = TRUE)
+datos_3$Midarm_c <- datos_3$Midarm - mean(datos_3$Midarm, na.rm = TRUE)
+
+# Calculando las nuevas variables
+datos_3$TrTh_c <- datos_3$Triceps_c * datos_3$Thigh_c
+datos_3$TrM_c <- datos_3$Triceps_c * datos_3$Midarm_c
+datos_3$ThM_c <- datos_3$Thigh_c * datos_3$Midarm_c
+
+# Ajustar el modelo lineal
+modelo_centrado <- lm(data = datos_3, Fat ~ Triceps_c + Thigh_c + Midarm_c + TrTh_c + TrM_c + ThM_c)
+
+# Mostrar el resumen del modelo
+summary(modelo_centrado)
+```
+
+Como podemos observar en el reumen del modelo, el modelo general es significativo $p < 0.001$ y explica una buena proporción de la variabilidad en $R^2 \approx 82\%$. Sin embargo, ninguna variable principal ni interacción individual tiene un efecto estadísticamente significativo ($p > 0.05$). Esto podría indicar multicolinealidad.
   
-    b. Calcula la matriz de correlaciones del modelo con interacciones.
+  d. ¿Cuál es la relación entre las variables principales y las interacciones? ¿Se refuerzan o se contrarrestan?
+    
+```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
+# Ajustar el modelo principal
+modelo_principal <- lm(Fat ~ Triceps_c + Thigh_c + Midarm_c, data = datos_3)
+
+# Ajustar el modelo con interacciones
+modelo_interacciones <- lm(Fat ~ Triceps_c + Thigh_c + Midarm_c + TrTh_c + TrM_c + ThM_c, data = datos_3)
+
+# ANOVA
+anova(modelo_principal, modelo_interacciones)
+```
+  
+  e. Obtén las sumas de cuadrados de la regresión (SSR) marginales de las variables del modelo con interacciones.
     
 ```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
 
 ```
   
-    c. Ajusta el modelo lineal con las variables de interacción. Considera las variables explicativas centradas (i.e., centra las variables explicativas y vuelve a calcular las interacciones). Describe brevemente los resultados del ajuste del modelo.
-    
-```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
-
-```
-  
-    d. ¿Cuál es la relación entre las variables principales y las interacciones? ¿Se refuerzan o se contrarrestan?
-    
-```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
-
-```
-  
-    e. Obtén las sumas de cuadrados de la regresión (SSR) marginales de las variables del modelo con interacciones.
-    
-```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
-
-```
-  
-    f. Realiza una prueba F para determinar si es apropiado retirar las variables de interacción del modelo. Plantea las hipótesis de la prueba, el criterio de descarte y los resultados de la prueba. Utiliza un nivel de prueba del 0.05.
+  f. Realiza una prueba F para determinar si es apropiado retirar las variables de interacción del modelo. Plantea las hipótesis de la prueba, el criterio de descarte y los resultados de la prueba. Utiliza un nivel de prueba del 0.05.
     
 ```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
 
