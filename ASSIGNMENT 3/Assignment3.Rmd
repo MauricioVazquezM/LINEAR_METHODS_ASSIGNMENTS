@@ -24,6 +24,7 @@ library(gridExtra)
 library(reshape2) 
 library(corrplot)
 library(ggcorrplot)
+library(car)
 ```
 
 ## Ejercicio 01
@@ -710,31 +711,74 @@ modelo_interacciones <- lm(Fat ~ Triceps_c + Thigh_c + Midarm_c + TrTh_c + TrM_c
 # ANOVA
 anova(modelo_principal, modelo_interacciones)
 ```
-  
+
+Las interacciones, $TrTh_c, TrM_c, ThM_c$, no aportan una mejora significativa al modelo. Esto indica que las variables principales, $Triceps_c, Thigh_c, Midarm_c$, explican la mayor parte de la variabilidad en $Fat$, y las interacciones no son necesarias para este análisis.
+
   e. Obtén las sumas de cuadrados de la regresión (SSR) marginales de las variables del modelo con interacciones.
     
 ```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
+# Sacando los SSR
+anova_result <- anova(modelo_interacciones)
 
+# Quedandonos con los marginales
+SSR_Triceps_c <- anova_result$`Sum Sq`[1]  
+SSR_Thigh_c <- anova_result$`Sum Sq`[2]    
+SSR_Midarm_c <- anova_result$`Sum Sq`[3]   
+SSR_TrTh_c <- anova_result$`Sum Sq`[4]     
+SSR_TrM_c <- anova_result$`Sum Sq`[5]      
+SSR_ThM_c <- anova_result$`Sum Sq`[6] 
 ```
-  
-  f. Realiza una prueba F para determinar si es apropiado retirar las variables de interacción del modelo. Plantea las hipótesis de la prueba, el criterio de descarte y los resultados de la prueba. Utiliza un nivel de prueba del 0.05.
+
+Las sumas de cuadrados de la regresión (SSR) son:
+
+* $SSR_{Triceps} = `r round(SSR_Triceps_c, 4)`$
+* $SSR_{Muslo} = `r round(SSR_Thigh_c, 4)`$
+* $SSR_{Antebrazo} = `r round(SSR_Midarm_c, 4)`$
+* $SSR_{TrTh} = `r round(SSR_TrTh_c, 4)`$
+* $SSR_{TrM} = `r round(SSR_TrM_c, 4)`$
+* $SSR_{ThM} = `r round(SSR_ThM_c, 4)`$
+
+f. Realiza una prueba F para determinar si es apropiado retirar las variables de interacción del modelo. Plantea las hipótesis de la prueba, el criterio de descarte y los resultados de la prueba. Utiliza un nivel de prueba del 0.05.
     
 ```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
-
+# ANOVA
+anova(modelo_principal, modelo_interacciones)
 ```
+
+Volviendo hacer el ejercicio con la ANOVA, podemos concluir que, con un $p_{value}=0.669 > 0.05$, no se rechaza la hipótesis nula ($H_0$). Por lo tanto, podemos considerar apropiado quitar las variables $TrTh_c, TrM_c, ThM_c$,  ya que no mejoran significativamente su capacidad explicativa.
   
 10. Calcula la matriz de correlaciones lineales entre las variables explicativas. Interpreta tus resultados.
 
-```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
+\vspace{-15mm}
+```{r fig.align='center', fig.width=3.5, fig.height=3.5, echo=FALSE}
+# Solo las variables originales
+data_or <- datos_3[, c("Triceps", "Thigh", "Midarm")]
 
+# Matriz de correlaciones
+cor_matrix <- round(cor(data_or), 3)
+
+# Plot
+ggcorrplot(cor_matrix, 
+           method = "circle", 
+           type = "lower", 
+           lab = TRUE, 
+           lab_size = 3, 
+           colors = c("red", "white", "blue")) 
 ```
+
+\vspace{-10mm}
 
 11. Calcula los factores de inflación de varianzas. ¿Qué puedes concluir respecto de la multicolinealidad de las variables? ¿Es esto consistente con el resultado obtenido en la pregunta anterior?
 
 ```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
+# VIF del modelo original
+vif_values <- vif(modelo_principal)
 
+# Mostrar la tabla en Markdown
+kable(vif_values, col.names = c("Variable","VIF"), 
+      caption = "Factores de Inflación de Varianzas (VIF)")
 ```
 
-
+En los tres casos se observan valores de los VIF mayores a 10, lo que indica la presencia de multicolinealidad. Esto es consistente con los resultados en la matriz de correlaciones.
 
 
