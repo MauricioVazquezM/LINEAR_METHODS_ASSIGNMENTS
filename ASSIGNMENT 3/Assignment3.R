@@ -289,3 +289,4 @@ valor.esperado <- sqrt(59) * sd(modelo_2$residuals) / sqrt(58) * qnorm(p = (rank
 correlacion <- cor(x = modelo_2$residuals, y = valor.esperado)
 
 ##### Pregunta 3 #####
+

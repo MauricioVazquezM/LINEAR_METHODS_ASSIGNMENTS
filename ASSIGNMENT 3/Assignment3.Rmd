@@ -348,6 +348,8 @@ Dado que, bajo la hipótesis de varianzas constantes, la estadística de prueba 
 
 <br>
 
+\newpage
+
 ## Ejercicio 02
 
 La masa muscular de una persona se espera que disminuya con la edad. Para explorar esta relación en mujeres, una nutrióloga selecciona aleatoriamente a 15 mujeres de cada grupo de edades por décadas, comenzado en la edad 40 y terminando en la edad 79. $X$ es la edad y $Y$ es la medida de masa muscular. Supón que el modelo de regresión lineal simple es apropiado.
