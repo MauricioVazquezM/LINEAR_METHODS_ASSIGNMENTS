@@ -574,16 +574,82 @@ Al igual que en la pregunta anterior, con un nivel de significancia $\alpha=0.01
 8. Completa la tabla que se muestra a continuación con los valores de los coeficientes de regresión estimados al incluir las variables señaladas en la primera columna. ¿Qué observas en los estimadores de los coeficientes?¿Son estables o inestables? ¿Qué significa que los coeficientes sean estables o inestables?
 
 ```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
+# Tabla a imprimir en knit
+tabla_coeficientes <- data.frame(
+  Modelo = c("Triceps (TR)", "Muslo (TH)", "Antebrazo (M)", "TR + TH", "TR + M", "TH + M", "TR + TH + M"),
+  Beta_0 = NA,
+  Beta_TR = NA,
+  Beta_TH = NA,
+  Beta_M = NA
+)
 
+# Modelo 1: TR (Triceps)
+modelo_TR <- lm(Fat ~ Triceps, data = datos_3)
+tabla_coeficientes$Beta_0[1] <- coef(modelo_TR)[1]
+tabla_coeficientes$Beta_TR[1] <- coef(modelo_TR)[2]
+
+# Modelo 2: TH (Muslo)
+modelo_TH <- lm(Fat ~ Thigh, data = datos_3)
+tabla_coeficientes$Beta_0[2] <- coef(modelo_TH)[1]
+tabla_coeficientes$Beta_TH[2] <- coef(modelo_TH)[2]
+
+# Modelo 3: M (Antebrazo)
+modelo_M <- lm(Fat ~ Midarm, data = datos_3)
+tabla_coeficientes$Beta_0[3] <- coef(modelo_M)[1]
+tabla_coeficientes$Beta_M[3] <- coef(modelo_M)[2]
+
+# Modelo 4: TR + TH (Triceps + Thigh)
+modelo_TR_TH <- lm(Fat ~ Triceps + Thigh, data = datos_3)
+tabla_coeficientes$Beta_0[4] <- coef(modelo_TR_TH)[1]
+tabla_coeficientes$Beta_TR[4] <- coef(modelo_TR_TH)["Triceps"]
+tabla_coeficientes$Beta_TH[4] <- coef(modelo_TR_TH)["Thigh"]
+
+# Modelo 5: TR + M (Triceps + Midarm)
+modelo_TR_M <- lm(Fat ~ Triceps + Midarm, data = datos_3)
+tabla_coeficientes$Beta_0[5] <- coef(modelo_TR_M)[1]
+tabla_coeficientes$Beta_TR[5] <- coef(modelo_TR_M)["Triceps"]
+tabla_coeficientes$Beta_M[5] <- coef(modelo_TR_M)["Midarm"]
+
+# Modelo 6: TH + M (Thigh + Midarm)
+modelo_TH_M <- lm(Fat ~ Thigh + Midarm, data = datos_3)
+tabla_coeficientes$Beta_0[6] <- coef(modelo_TH_M)[1]
+tabla_coeficientes$Beta_TH[6] <- coef(modelo_TH_M)["Thigh"]
+tabla_coeficientes$Beta_M[6] <- coef(modelo_TH_M)["Midarm"]
+
+# Modelo 7: TR + TH + M (Todos)
+modelo_TR_TH_M <- lm(Fat ~ Triceps + Thigh + Midarm, data = datos_3)
+tabla_coeficientes$Beta_0[7] <- coef(modelo_TR_TH_M)[1]
+tabla_coeficientes$Beta_TR[7] <- coef(modelo_TR_TH_M)["Triceps"]
+tabla_coeficientes$Beta_TH[7] <- coef(modelo_TR_TH_M)["Thigh"]
+tabla_coeficientes$Beta_M[7] <- coef(modelo_TR_TH_M)["Midarm"]
+
+# Tabla completa al knit
+tabla_coeficientes %>%
+  kable(caption = "Coeficientes de los modelos ajustados", booktabs = TRUE) %>%
+  kable_styling(latex_options = c("striped", "hold_position"))
 ```
+
+Como podemos observar en la table, los coeficientes (\( \beta_{TR}, \beta_{TH}, \beta_{M} \)) varían, de manera considerable, entre los diferentes modelos. Por ejemplo:
+
+- \( \beta_{TR} \) pasa de \( 0.8571865 \) en el modelo con solo \( TR \) a \( 4.3340920 \) en el modelo con todas las variables (\( TR + TH + M \)).
+- \( \beta_{TH} \) cambia de \( 0.8565466 \) en el modelo con solo \( TH \) a \( -2.8568479 \) en el modelo completo.
+- \( \beta_{M} \) también fluctúa. Siendo \( 0.1994286 \) en el modelo con \( M \), únicamente, y \( -2.1860603 \) en el modelo completo.
+
+Este comportamiento de los coeficientes es una indicación de cierta inestabilidad, ya que los valores cambian de manera notable cuando se agregan o eliminan variables en el modelo.
+
+<br>
 
 9. Se desea ahora formalmente probar si las interacciones entre las variables deberían ser agregadas al modelo.
 
     a. Plantea el modelo completo con interacciones.
     
-```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
+\begin{align*}
+Y = \beta_0 &+ \beta_{TR} X_{TR} + \beta_{TH} X_{TH} + \beta_{M} X_{M} \\
+&+ \beta_{TR|TH} X_{TR} X_{TH} + \beta_{TR|M} X_{TR} X_{M} \\
+&+ \beta_{TH|M} X_{TH} X_{M} + \epsilon 
+\end{align*}
 
-```
+<br>
   
     b. Calcula la matriz de correlaciones del modelo con interacciones.
     
