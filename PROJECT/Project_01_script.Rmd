@@ -1,7 +1,7 @@
 ---
 title: 'Proyecto Estadistica Aplicada II: Otoño 2024'
-author: "Mauricio Vazquez Moran"
-date: '2024-10-31'
+author: "Mauricio Vazquez Moran (000191686)"
+date: '2024-12-12'
 output:
   pdf_document: default
   html_document: default
@@ -822,4 +822,20 @@ kable(vif_values, col.names = c("Variable","VIF"),
 
 Confirmando lo mencionado mas arriba, generado por la matriz de correlación, los factores de inflación de varianza (VIF) calculados para las variables predictoras del modelo muestran valores muy bajos, cercanos a 1. Esto nos indica que no existe multicolinealidad significativa entre las variables. Recordemos que un VIF mayor a 10 suele considerarse un indicador de posible multicolinealidad, mientras que valores cercanos a 1 sugieren que las variables son prácticamente independientes. Este resultado, junto con las bajas correlaciones entre los predictores observadas previamente, respalda la estabilidad del modelo de regresión lineal múltiple planteado para este proyecto.
 
+\newpage
+
 ### Conclusiones finales
+
+El análisis realizado permitió evaluar un modelo de regresión lineal simple y múltiple diseñado para predecir el rendimiento estudiantil ($performance-idx$) en función de varias variables predictoras. La variable $prev-scores$ fue identificada como el predictor más relevante, mostrando una correlación alta y un impacto significativo en el rendimiento estudiantil. Este hallazgo tiene sentido desde una perspectiva práctica, ya que los resultados previos suelen capturar no solo la capacidad académica del estudiante, sino también factores, no medidos en este análisis, bilaterales como su preparación y hábitos de estudio. Sin embargo, aunque $prev-scores$ explica gran parte de la variabilidad en el rendimiento acádemico, su alta relevancia podría limitar la capacidad del modelo para brindar información relevante si el objetivo, por ejemplo, es diseñar estrategias de mejora acádemica para estudiantes. En este caso, las otras variables predictoras ofrecen información complementaria o mas manejable para esto.
+
+Ejemplos:
+
+* $hrs-studied$ tiene un impacto significativo aunque menor, lo que sugiere que aumentar las horas de estudio podría mejorar el rendimiento en cierta medida, especialmente en estudiantes con resultados previos bajos.
+* $sample-questions$ y $sleep-hrs$, aportan elementos prácticos: la práctica de exámenes de muestra puede reforzar y un buen descanso es crítico para el rendimiento.
+* $xtr-activities$, aunque menos predictiva en este contexto, captura la potencial influencia de actividades no acádemcias que podrían impactar indirectamentes.
+
+Desde una perspectiva interpretable, el modelo no solo confirma que los resultados previos son un fuerte indicador del rendimiento, sino que también destaca áreas donde pueden intervenirse directamente para mejorar el desempeño académico. Esto justifica el uso complementario de variables adicionales menciondas, que son más modificables en términos de intervención educativa.
+
+Por otro lado, en términos metodológicos, el modelo cumple con los supuestos fundamentales de la regresión lineal múltiple, incluyendo la linealidad, la homocedasticidad, la normalidad de los residuos y la ausencia de multicolinealidad. Esto garantiza que las inferencias realizadas son válidas y confiables.
+
+En conclusión, aunque $prev-scores$ es el predictor más importante. Las demás variables ofrecen un contexto complementario y útil para diseñar estrategias prácticas de intervención. El modelo es una herramienta sólida para entender los factores que influyen en el desempeño estudiantil. 
