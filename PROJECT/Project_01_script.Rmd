@@ -26,6 +26,7 @@ library(gridExtra)
 library(corrplot)
 library(ggcorrplot)
 library(car)
+library(lmtest)
 ```
 
 ```{r, echo=FALSE}
@@ -530,7 +531,83 @@ Como se puede analizar en la ANOVA realizado, el predictor $prev-scores$ es la v
 
 ### Diagnóstico del modelo 
 
-```{r, fig.align='center', fig.width=3.5, fig.height=2.5, echo=FALSE}
+El diagnóstico del modelo lineal múltiple es un paso fundamental para evaluar la validez y la calidad del ajuste del modelo. Este análisis se centrará en verificar los principales supuestos asociados con este tipo de modelos. En primer lugar, se diagnosticará el supuesto de linealidad, evaluando si la relación entre las variables predictoras y la variable dependiente es adecuada. A continuación, se analizarán los residuos para identificar patrones o problemas de especificación en el modelo. Asimismo, se evaluará la presencia de heterocedasticidad, que puede indicar varianzas no constantes en los residuos, y la normalidad de los mismos, requisito esencial para realizar inferencias válidas. Por último, se examinará la multicolinealidad entre las variables predictoras, asegurando que no existan relaciones fuertes entre ellas que puedan afectar la interpretación de los coeficientes del modelo. Este diagnóstico permitirá validar la robustez del modelo y garantizar que los resultados obtenidos sean fiables y adecuados.
+
+### 1. Linealidad
+
+Como lo visto en clase, el primer supuesto que analizaremos es el de la linealidad. En el contexto de la regresión, cuando hablamos de un modelo lineal, nos referimos principalmente a que sea lineal en los coeficientes de la regresión. En el análisis realizado hasta ahora, ya hemos explorado de alguna forma este supuesto. Sin embargo, es posible que nuestro modelo sea aproximadamente lineal, lo que podría permitir obtener coeficientes de regresión significativos y explicar una parte importante de la variabilidad de la variable respuesta, mientras que, al mismo tiempo, puede mostrar ciertos indicios de no linealidad.
+
+```{r, fig.align='center', fig.width=6, fig.height=4, echo=FALSE}
+# ("hrs_studied", "prev_scores", "xtr_activities", "sleep_hrs", "sample_questions", "performance_idx")
+
+## Otras dimensiones
+data$hrs_studied.sq <- data$hrs_studied**2
+data$prev_scores.sq <- data$prev_scores**2
+data$sleep_hrs.sq <- data$sleep_hrs**2
+data$sample_questions.sq <- data$sample_questions**2
+
+## Modelo dos
+modelo_m2 <- lm(performance_idx ~ hrs_studied.sq + prev_scores.sq + sleep_hrs.sq + sample_questions.sq, data = data)
+
+# Residuales y valores ajustados
+residuales_m2 <- residuals(modelo_m2)
+valores_ajustados2 <- fitted(modelo_m2)
+
+# DF auxiliar
+residuals_df2 <- data.frame(Residuales = residuales_m2,
+                              ValoresAjustados = valores_ajustados2,
+                              X_1 = data$hrs_studied.sq,
+                              X_2 = data$prev_scores.sq,
+                              X_3 = data$sample_questions.sq,
+                              X_4 = data$sleep_hrs.sq
+                            )
+
+# Muestreo de 100 filas
+muestreado2 <- residuals_df2[sample(nrow(residuals_df2), size = 100, replace = FALSE), ]
+
+# Plot residuales vs X_1
+plot2 <- ggplot(muestreado2, aes(x = Residuales, y = X_1)) +
+  geom_point(alpha = 0.7) +
+  labs(title = "vs. hrs_studied (squared)", x = "Residuales", y = "hrs_studied (squared)") +
+  theme_minimal()
+
+# Plot residuales vs X_2
+plot3 <- ggplot(muestreado2, aes(x = Residuales, y = X_2)) +
+  geom_point(alpha = 0.7) +
+  labs(title = "vs. prev_scores (squared)", x = "Residuales", y = "prev_scores (squared)") +
+  theme_minimal()
+
+# Plot residuales vs X_3
+plot4 <- ggplot(muestreado2, aes(x = Residuales, y = X_3)) +
+  geom_point(alpha = 0.7) +
+  labs(title = "vs. sample_questions (squared)", x = "Residuales", y = "sample_questions (squared)") +
+  theme_minimal()
+
+# Plot residuales vs X_4
+plot5 <- ggplot(muestreado2, aes(x = Residuales, y = X_4)) +
+  geom_point(alpha = 0.7) +
+  labs(title = "vs. sleep_hrs (squared)", x = "Residuales", y = "sleep_hrs (squared)") +
+  theme_minimal()
+
+# Grid
+grid.arrange(plot2, plot3, plot4, plot5, ncol = 2)
+```
+
+Observaciones:
+
+* Los gráficos de residuos contra hrs_studied (squared), sample_questions (squared) y sleep_hrs (squared) no muestran patrones claros que sugieran no linealidad. Por lo tanto, los términos cuadráticos de estas variables podrían no ser necesarios en el modelo.
+* Por otro lado, pareciera que hay evidencia de una relación no lineal entre prev_scores y la variable dependiente, particularmente en valores altos de prev_scores. Esto podría justificar mantener el término cuadrático en el modelo. Se determinara esto con los análisis posteriores.
+
+```{r fig.width=10, fig.height=4.5, echo=FALSE}
+# Rainbow test
+raintest(modelo_m)
+```
+
+Dado el $p_{value}=0.0342$, se rechaza $H_0$ al nivel de siginifcancia de $\alpha = 0.05$. Lo cuá implica que hay indicios de no linealidad en la relación entre las variables predictoras y la variable dependiente. En otras palabras, el modelo lineal múltiple podría no ser la mejor opción para capturar completamente la relación entre las variables. Por lo tanto, se necesita una revisión analitica mas detallada.
+
+### 2. Análisis de los residuales
+
+```{r, fig.align='center', fig.width=9, fig.height=6, echo=FALSE}
 # ("hrs_studied", "prev_scores", "xtr_activities", "sleep_hrs", "sample_questions", "performance_idx")
 # Residuales y valores ajustados
 residuales <- residuals(modelo_m)
@@ -551,18 +628,6 @@ residuals_df <- data.frame(
   X1_X2 = data$X1_X2
 )
 
-# QQ Plot
-ggplot(residuals_df, aes(sample = Residuales)) +
-  stat_qq() +
-  stat_qq_line(color = "red") +
-  labs(title = "QQ Plot Residuales", x = "Cuantiles Teóricos", y = "Cuantiles Residuales") +
-  theme_minimal()
-```
-
-* Como podemos observar en el QQ-plot, la mayoría de los puntos están alineados con la línea de referencia, lo que sugiere que los residuos siguen aproximadamente una distribución normal. 
-* Por otro lado, en las colas, hay ligeras desviaciones de la línea. Esto indica que podría haber algunos residuos que no siguen perfectamente una distribución normal, lo que podría deberse a valores atípicos.
-
-```{r, fig.align='center', fig.width=9, fig.height=6, echo=FALSE}
 # # Muestreo de 100 filas aleatorias sin reemplazo
 set.seed(123)  
 muestreado <- residuals_df[sample(nrow(data), size = 100, replace = FALSE), ]
@@ -588,7 +653,7 @@ plot3 <- ggplot(muestreado, aes(x = Residuales, y = X_2)) +
 # Plot residuales vs X_3
 plot4 <- ggplot(muestreado, aes(x = Residuales, y = X_3)) +
   geom_point(alpha = 0.7) +
-  labs(title = "vs. xtr_activitie", x = "Residuales", y = "xtr_activities") +
+  labs(title = "vs. xtr_activities", x = "Residuales", y = "xtr_activities") +
   theme_minimal()
 
 # Plot residuales vs X_4
@@ -625,6 +690,23 @@ Observaciones:
 
 Dicho lo anterior, podemos decir que los residuos parecen distribuidos aleatoriamente en todos los gráficos, lo que respalda los supuestos de homocedasticidad e independencia. Además, no se observan patrones sistemáticos claros que sugieran problemas importantes de linealidad o heterocedasticidad.
 
+### 3.  Varianzas no constantes (Heterocedasticidad)
+
+
+### 4. Normalidad
+
+```{r, fig.align='center', fig.width=3.5, fig.height=2.5, echo=FALSE}
+# QQ Plot
+ggplot(residuals_df, aes(sample = Residuales)) +
+  stat_qq() +
+  stat_qq_line(color = "red") +
+  labs(title = "QQ Plot Residuales", x = "Cuantiles Teóricos", y = "Cuantiles Residuales") +
+  theme_minimal()
+```
+
+* Como podemos observar en el QQ-plot, la mayoría de los puntos están alineados con la línea de referencia, lo que sugiere que los residuos siguen aproximadamente una distribución normal. 
+* Por otro lado, en las colas, hay ligeras desviaciones de la línea. Esto indica que podría haber algunos residuos que no siguen perfectamente una distribución normal, lo que podría deberse a valores atípicos.
+
 ```{r, fig.align='center', fig.width=8, fig.height=5, echo=FALSE}
 # Residuales del modelo
 residuales <- residuals(modelo_m)
@@ -635,11 +717,11 @@ prueba_sw <- shapiro.test(residuos_submuestra)
 prueba_sw
 ```
 
-Dado que el $p_{value}$ es mayor a 0.05, en la prueba Shapir-Wilk, no se rechaza la hipótesis nula. Esto indica que los residuos del modelo pueden considerarse normalmente distribuidos. Por lo tanto, ahora mas formalmente, podemos decri que se cumple este supuesto.
+Dado que el $p_{value}$ es mayor a 0.05, en la prueba Shapiro-Wilk, no se rechaza la hipótesis nula. Esto indica que los residuos del modelo pueden considerarse normalmente distribuidos. Por lo tanto, ahora mas formalmente, podemos decri que se cumple este supuesto.
 
-\vspace{-10mm}
+### 5. Multicolinealidad
 
-```{r, fig.align='center', fig.width=4, fig.height=4, echo=FALSE}
+```{r, fig.align='center', fig.width=4.5, fig.height=4.5, echo=FALSE}
 # Matriz de correlaciones
 data_cor <- data[, c("hrs_studied", "prev_scores", "sleep_hrs", "sample_questions", "performance_idx")]
 cor_matrix <- round(cor(data_cor), 3)
@@ -652,8 +734,6 @@ ggcorrplot(cor_matrix,
            lab_size = 3, 
            colors = c("red", "white", "blue")) 
 ```
-
-\vspace{-10mm}
 
 El análisis de correlación destaca a prev_scores como el predictor más importante del índice de rendimiento (performance_idx), con una correlación alta de 0.92, indicando una fuerte relación positiva. hrs_studied muestra una correlación moderada (0.37), lo que sugiere que las horas de estudio también influyen, aunque en menor medida. Por el contrario, sleep_hrs (0.05) y sample_questions (0.04) tienen correlaciones muy bajas, lo que implica que su impacto en el rendimiento académico es limitado. Además, las bajas correlaciones entre los predictores reducen el riesgo de multicolinealidad, lo que respalda la estabilidad del modelo ajustado.
 
