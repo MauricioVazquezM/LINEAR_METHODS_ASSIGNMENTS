@@ -527,15 +527,8 @@ Como se puede analizar en la ANOVA realizado, el predictor $prev-scores$ es la v
 
 ### Diagnóstico del modelo 
 
-```{r, fig.align='center', fig.width=2.5, fig.height=2.5, echo=FALSE}
+```{r, fig.align='center', fig.width=3.5, fig.height=2.5, echo=FALSE}
 # ("hrs_studied", "prev_scores", "xtr_activities", "sleep_hrs", "sample_questions", "performance_idx")
-
-# Supongamos que tienes un DataFrame llamado 'data'
-set.seed(123)  # Fijar semilla para reproducibilidad
-
-# Muestreo de 100 filas aleatorias sin reemplazo
-muestra <- data[sample(nrow(data), size = 100, replace = FALSE), ]
-
 # Residuales y valores ajustados
 residuales <- residuals(modelo_m)
 valores_ajustados <- fitted(modelo_m)
@@ -567,44 +560,48 @@ ggplot(residuals_df, aes(sample = Residuales)) +
 * Por otro lado, en las colas, hay ligeras desviaciones de la línea. Esto indica que podría haber algunos residuos que no siguen perfectamente una distribución normal, lo que podría deberse a valores atípicos.
 
 ```{r, fig.align='center', fig.width=9, fig.height=6, echo=FALSE}
+# # Muestreo de 100 filas aleatorias sin reemplazo
+set.seed(123)  
+muestreado <- residuals_df[sample(nrow(data), size = 100, replace = FALSE), ]
+
 # Plot residuales vs valores ajustados
-plot1 <- ggplot(residuals_df, aes(x = Residuales, y = ValoresAjustados)) +
+plot1 <- ggplot(muestreado, aes(x = Residuales, y = ValoresAjustados)) +
   geom_point(alpha = 0.7) +
   labs(title = "vs. Valores Ajustados", x = "Residuales", y = "Y_hat") +
   theme_minimal()
 
 # Plot residuales vs X_1
-plot2 <- ggplot(residuals_df, aes(x = Residuales, y = X_1)) +
+plot2 <- ggplot(muestreado, aes(x = Residuales, y = X_1)) +
   geom_point(alpha = 0.7) +
   labs(title = "vs. hrs_studied", x = "Residuales", y = "hrs_studied") +
   theme_minimal()
 
 # Plot residuales vs X_2
-plot3 <- ggplot(residuals_df, aes(x = Residuales, y = X_2)) +
+plot3 <- ggplot(muestreado, aes(x = Residuales, y = X_2)) +
   geom_point(alpha = 0.7) +
   labs(title = "vs. prev_scores", x = "Residuales", y = "prev_scores") +
   theme_minimal()
 
 # Plot residuales vs X_3
-plot4 <- ggplot(residuals_df, aes(x = Residuales, y = X_3)) +
+plot4 <- ggplot(muestreado, aes(x = Residuales, y = X_3)) +
   geom_point(alpha = 0.7) +
   labs(title = "vs. xtr_activitie", x = "Residuales", y = "xtr_activities") +
   theme_minimal()
 
 # Plot residuales vs X_4
-plot5 <- ggplot(residuals_df, aes(x = Residuales, y = X_4)) +
+plot5 <- ggplot(muestreado, aes(x = Residuales, y = X_4)) +
   geom_point(alpha = 0.7) +
   labs(title = "vs. sleep_hrs", x = "Residuales", y = "sleep_hrs") +
   theme_minimal()
 
 # Plot residuales vs X_5
-plot6 <- ggplot(residuals_df, aes(x = Residuales, y = X_5)) +
+plot6 <- ggplot(muestreado, aes(x = Residuales, y = X_5)) +
   geom_point(alpha = 0.7) +
   labs(title = "vs. sample_questions", x = "Residuales", y = "sample_questions") +
   theme_minimal()
 
 # Plot residuales vs X_1 * X_2
-plot7 <- ggplot(residuals_df, aes(x = Residuales, y = X1_X2)) +
+plot7 <- ggplot(muestreado, aes(x = Residuales, y = X1_X2)) +
   geom_point(alpha = 0.7) +
   labs(title = "vs. sample_questions / hrs_studied", x = "Residuales", y = "sample_questions / hrs_studied") +
   theme_minimal()
@@ -613,6 +610,33 @@ plot7 <- ggplot(residuals_df, aes(x = Residuales, y = X1_X2)) +
 grid.arrange(plot1, plot2, plot3, plot4, plot5, plot6, plot7, ncol = 3)
 ```
 
+Observaciones:
+
+1. Residuos vs. Valores Ajustados: No hay un patrón claro o forma específica, lo que sugiere que los residuos están distribuidos aleatoriamente y cumplen razonablemente con el supuesto de homocedasticidad.
+2. Residuos vs. hrs_studied: Los puntos están dispersos de manera aleatoria, sin un patrón claro, lo que sugiere que no hay una relación no lineal entre hrs_studied y los residuos.
+3. Residuos vs. prev_scores: Los puntos se distribuyen de manera aleatoria, pero con una ligera acumulación en ciertos valores altos de prev_scores.
+4. Residuos vs. xtr_activities: La dispersión parece equilibrada entre ambas categorías, sin un sesgo claro en los residuos.
+5. Residuos vs. sleep_hrs: No se observa un patrón sistemático en los puntos, lo que sugiere que la relación entre sleep_hrs y la variable dependiente está bien modelada.
+6. Residuos vs. sample_questions: Los residuos están distribuidos aleatoriamente, lo que indica que no hay problemas aparentes con esta variable en el modelo.
+7. Residuos vs. sample_questions / hrs_studied: No se observa un patrón claro, lo que sugiere que esta interacción no presenta problemas significativos en el modelo.
+
+Dicho lo anterior, podemos decir que los residuos parecen distribuidos aleatoriamente en todos los gráficos, lo que respalda los supuestos de homocedasticidad e independencia. Además, no se observan patrones sistemáticos claros que sugieran problemas importantes de linealidad o heterocedasticidad.
+
+```{r, fig.align='center', fig.width=8, fig.height=5, echo=FALSE}
+# Residuales del modelo
+residuales <- residuals(modelo_m)
+residuos_submuestra <- sample(residuales, size = 5000, replace = FALSE)
+
+# Prueba de Shapiro-Wilk
+prueba_sw <- shapiro.test(residuos_submuestra)
+prueba_sw
+```
+
+Dado que el $p_{value}$ es mayor a 0.05, en la prueba Shapir-Wilk, no se rechaza la hipótesis nula. Esto indica que los residuos del modelo pueden considerarse normalmente distribuidos. Por lo tanto, ahora mas formalmente, podemos decri que se cumple este supuesto.
+
+```{r, fig.align='center', fig.width=8, fig.height=5, echo=FALSE}
+
+```
 
 
 ### Conclusiones finales
