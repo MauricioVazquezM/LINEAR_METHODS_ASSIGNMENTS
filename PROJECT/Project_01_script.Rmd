@@ -297,15 +297,79 @@ grid.arrange(scatter1, scatter2, scatter3, scatter4, ncol = 2)
 3. Al igual que con las horas estudiadas, no hay un patrón claro entre las horas de sueño y el rendimiento. 
 4. No se observa una relación clara entre el número de exámenes de práctica realizados y el índice de performance. Los puntos están distribuidos uniformemente en todas las categorías de 'sample questions'.
 
-**Conclusión**
+**Conclusión EDA**
 
 En el gráfico de dispersión entre la variable que representan los scores anteriores y el indice de performance, hay una clara relación positiva. A medida que los puntajes anteriores aumentan, también lo hace el índice de performance, lo que sugiere una relación lineal que podría modelarse efectivamente con una regresión lineal simple. 
 
 Por otro lado, esta variable mencionada parece ser un fuerte predictor del índice de performance. La dispersión de los puntos sigue una tendencia ascendente notoria, indicativo que los valores altos de los scores anteriores se tienden a asociarse con valores altos del índice de performance. Por lo mencionado en los puntos antoriores, podemos hacer la suposición de que es un buen candidato para una predicción lineal.
 
-```{r fig.align='center',fig.width=5, fig.height=3.5, echo=FALSE}
 
+## Ajuste de un modelo lineal simple
+
+* Para entender la relación entre el índice de desempeño y las calificaciones anteriores, ajustamos un modelo de regresión lineal simple. Este modelo nos ayudará a evaluar la fuerza y la dirección de la relación entre las dos variables, permitiéndonos inferir si aumentos en las calificaciones previas están asociados con un incremento en el índice de desempeño actual del estudiante.
+
+```{r, echo=FALSE}
+# Modelo oficial
+modelo_of <- lm(data = data, formula = performance_idx ~ prev_scores)
+
+summary(modelo_of)
 ```
+
+\newpage
+
+### Analisis del modelo propuesto
+
+* **Residuales**
+
+La mediana cercana a cero sugiere que los residuos están distribuidos simétricamente alrededor de cero. Esto indica que el modelo no tiene un sesgo. Por otro lado, el rango de los residuos (aproximadamente de -17.77 a 19.43) indica que existe variabilidad en la precisión del modelo.
+
+* **Coeficientes**
+
+El coeficiente de prev_scores es significativo y positivo, lo que indica que prev_scores es un buen predictor de performance_idx. En otras palabras, el indice de rendimiento tiende a aumentar, en promedio, en 1.0138 unidades por cada punto adicional en prev_scores. Ademas, los errores estándar bajos para ambos coeficientes sugieren que las estimaciones son precisas.
+
+* **Residual Standard Error**
+
+El valor de 7.744, en residual standard error, indica que, en promedio, los valores predichos por el modelo difieren de los valores observados en aproximadamente 7.744 unidades. Dado el valor de este, podemos decir que el modelo ajusta los datos bastante bien, con un error promedio relativamente pequeño en las predicciones del indice de performance.
+
+* **R-squared**
+
+El R-cuadrado de 0.8376 nos dice que el modelo tiene un buen ajuste y explica la mayoría de la variabilidad en performance_idx a partir de prev_scores. Esto nos indica que el modelo es robusto y adecuado
+
+* **F-statistic**
+
+El valor del estadistico F muy alto junto con un valor p extremadamente bajo nos indica que el modelo de regresión es altamente significativo. En otras palabras, sugiere que el predictor prev_scores tiene un impacto real en performance_idx y que el modelo es bueno para realizar predicciones.
+
+```{r fig.align='center',fig.width=5, fig.height=3, echo=FALSE}
+# Muestreando para visualizar
+set.seed(42)  
+sample_size <- 250  
+
+# Crear una secuencia 
+residuos <- modelo_of$residuals
+tiempo <- 1:length(residuos)
+
+# Muestreando los índices
+indices_muestra <- sort(sample(tiempo, size = sample_size))
+data_sample <- data[indices_muestra, ]
+
+# Grafico de regresion
+ggplot(data = data_sample) + 
+  aes(x = prev_scores, y = performance_idx) +
+  geom_point() +
+  geom_smooth(method = 'lm', formula = y ~ x, se = TRUE) +
+  theme_bw()
+```
+
+### ANOVA
+
+```{r fig.width=10, fig.height=4.5, echo=FALSE}
+anova(object = modelo_of)
+```
+
+1. Como se menciona arriba, mediante la estadística F alta y el valor p cercano a cero se confirma, en la tabla ANOVA, que el predictor prev_scores es estadísticamente significativo y tiene un efecto sobre indice de performance.
+2. La suma de cuadrados explicada por prev_scores en comparación con la suma de cuadrados residual nos indica que prev_scores explica la mayor parte de la variabilidad en indice de performance.
+
+<br>
 
 ## Verificación de Supuestos
 
@@ -327,27 +391,29 @@ grupo.2$d <- abs(grupo.2$residuals-mediana.epsilon.gorro.2)
 d.media.1 <- mean(grupo.1$d)
 d.media.2 <- mean(grupo.2$d)
 
-SSD <- 
-  (sum((grupo.1$d - d.media.1)^2) + sum((grupo.2$d - d.media.2)^2)) / 
-  (nrow(data) - 2)
+SSD <- (sum((grupo.1$d - d.media.1)^2) + sum((grupo.2$d - d.media.2)^2)) / (nrow(data) - 2)
 
-t.star.bf <- 
-  abs(d.media.1 - d.media.2)/sqrt(SSD*(1/nrow(grupo.1) + 1/nrow(grupo.2)))
+t.star.bf <- abs(d.media.1 - d.media.2)/sqrt(SSD*(1/nrow(grupo.1) + 1/nrow(grupo.2)))
 
-t.star.bf.p.value <- 
-  pt(q = t.star.bf, df = nrow(data)-2, lower.tail = FALSE)
+t.star.bf.p.value <- pt(q = t.star.bf, df = nrow(data)-2, lower.tail = FALSE)
 
-homo_1 <- ggplot(data = data) +
-  aes(x = modelo$fitted.values, y = modelo$residuals) +
-  geom_vline(xintercept = median(modelo$fitted.values)) +
+# Muestreo de 100 filas en df auxiliar
+auxiliar <- data.frame(residuales = residuals(modelo),
+                       valores_ajustados = fitted(modelo))
+sample_lh <- auxiliar[sample(nrow(auxiliar), size = 100, replace = FALSE), ]
+
+homo_1 <- ggplot(data = sample_lh, aes(x = valores_ajustados, y = residuales)) +
+  geom_vline(xintercept = median(sample_lh$valores_ajustados)) +
   geom_hline(yintercept = 0) +
   geom_point() +
+  labs(x = "valores ajustados", y = "residuales") +
   theme_classic()
 
 homo_2 <- ggplot(data = grupo.1) +
   aes(x = residuals) +
   geom_density() +
   geom_density(data = grupo.2, mapping = aes(x = residuals), colour = 'red') +
+  labs(x = "densidad", y = "residuales") +
   theme_classic()
 
 # Cuadrícula de 2x2
@@ -357,6 +423,8 @@ grid.arrange(homo_1, homo_2, ncol = 2)
 
 * El plot nos indica que se cumplen razonablemente bien los supuestos de linealidad y homocedasticidad. Los residuos están distribuidos de manera aleatoria alrededor de cero, sin una tendencia visible, y la dispersión parece bastante constante a lo largo de los valores ajustados. Esto sugiere que el modelo de regresión lineal es adecuado y los supuestos básicos no parecen estar violados en este caso.
 * El plot nos indica que  la curva roja (valores ajustados superiores a la mediana) tiene más picos en la parte superior, lo que sugiere una mayor variabilidad en los residuos en ese grupo en comparación con los valores ajustados por debajo de la mediana. Sin embargo, ambas curvas de densidad son bastante similares en general. La mayoría de los residuos están concentrados en torno a cero, lo que indica que tanto los valores ajustados por debajo como por encima de la mediana tienden a tener residuos centrados en torno a cero.
+
+\newpage
 
 ***Normalidad de los residuos***
 
@@ -398,73 +466,6 @@ plot(tiempo[indices_muestra], residuos[indices_muestra], type = "l",
 * Los residuos no tienen un patrón de cambio sistemático a lo largo del índice, lo cual es un indicativo de independencia de los residuos.
 
 Con base en los resultados obtenidos, podemos concluir que se cumplen los supuestos de la regresión lineal. La distribución de los residuos y su comportamiento a lo largo del tiempo sugieren que no hay patrones evidentes de autocorrelación ni heterocedasticidad, y que la normalidad de los residuos es razonable. Por lo tanto, podemos asumir que el modelo de regresión lineal es adecuado para estos datos y que cumple con los supuestos necesarios para realizar inferencias confiables a partir de él.
-
-<br>
-
-## Ajuste de un modelo lineal simple
-
-* Para entender la relación entre el índice de desempeño y las calificaciones anteriores, ajustamos un modelo de regresión lineal simple. Este modelo nos ayudará a evaluar la fuerza y la dirección de la relación entre las dos variables, permitiéndonos inferir si aumentos en las calificaciones previas están asociados con un incremento en el índice de desempeño actual del estudiante.
-
-```{r, echo=FALSE}
-# Modelo oficial
-modelo_of <- lm(data = data, formula = performance_idx ~ prev_scores)
-
-summary(modelo_of)
-```
-
-### Analisis del modelo propuesto
-
-* **Residuales**
-
-La mediana cercana a cero sugiere que los residuos están distribuidos simétricamente alrededor de cero. Esto indica que el modelo no tiene un sesgo. Por otro lado, el rango de los residuos (aproximadamente de -17.77 a 19.43) indica que existe variabilidad en la precisión del modelo.
-
-* **Coeficientes**
-
-El coeficiente de prev_scores es significativo y positivo, lo que indica que prev_scores es un buen predictor de performance_idx. En otras palabras, el indice de rendimiento tiende a aumentar, en promedio, en 1.0138 unidades por cada punto adicional en prev_scores. Ademas, los errores estándar bajos para ambos coeficientes sugieren que las estimaciones son precisas.
-
-* **Residual Standard Error**
-
-El valor de 7.744, en residual standard error, indica que, en promedio, los valores predichos por el modelo difieren de los valores observados en aproximadamente 7.744 unidades. Dado el valor de este, podemos decir que el modelo ajusta los datos bastante bien, con un error promedio relativamente pequeño en las predicciones del indice de performance.
-
-* **R-squared**
-
-El R-cuadrado de 0.8376 nos dice que el modelo tiene un buen ajuste y explica la mayoría de la variabilidad en performance_idx a partir de prev_scores. Esto nos indica que el modelo es robusto y adecuado
-
-* **F-statistic**
-
-El valor del estadistico F muy alto junto con un valor p extremadamente bajo nos indica que el modelo de regresión es altamente significativo. En otras palabras, sugiere que el predictor prev_scores tiene un impacto real en performance_idx y que el modelo es bueno para realizar predicciones.
-
-<br>
-
-```{r fig.align='center',fig.width=6, fig.height=4, echo=FALSE}
-# Muestreando para visualizar
-set.seed(42)  
-sample_size <- 250  
-
-# Muestreando los índices
-indices_muestra <- sort(sample(tiempo, size = sample_size))
-data_sample <- data[indices_muestra, ]
-
-# Grafico de regresion
-ggplot(data = data_sample) + 
-  aes(x = prev_scores, y = performance_idx) +
-  geom_point() +
-  geom_smooth(method = 'lm', formula = y ~ x, se = TRUE) +
-  theme_bw()
-```
-
-<br>
-
-### ANOVA
-
-```{r fig.width=10, fig.height=4.5, echo=FALSE}
-anova(object = modelo_of)
-```
-
-1. Como se menciona arriba, mediante la estadística F alta y el valor p cercano a cero se confirma, en la tabla ANOVA, que el predictor prev_scores es estadísticamente significativo y tiene un efecto sobre indice de performance.
-2. La suma de cuadrados explicada por prev_scores en comparación con la suma de cuadrados residual nos indica que prev_scores explica la mayor parte de la variabilidad en indice de performance.
-
-<br>
 
 ### Conclusiones (Primera entrega)
 
@@ -746,15 +747,15 @@ residuales <- residuals(modelo_m)
 # DF auxiliar
 df_auxiliar <- data.frame(
   residuales = abs(residuales),
-  X_1 = data$hrs_studied,
-  X_2 = data$prev_scores,
-  X_3 = data$xtr_activities,
-  X_4 = data$sleep_hrs,
-  X_5 = data$sample_questions
+  hrs_studied = data$hrs_studied,
+  prev_scores = data$prev_scores,
+  xtr_activities = data$xtr_activities,
+  sleep_hrs = data$sleep_hrs,
+  sample_questions = data$sample_questions
 )
 
 # Prueba de Glejser 
-glejser_model <- lm(data=df_auxiliar, residuales ~ X_1 + X_2 + X_3 + X_4 + X_5)
+glejser_model <- lm(data=df_auxiliar, residuales ~ hrs_studied + prev_scores + xtr_activities + sleep_hrs + sample_questions)
 
 # Resumen del modelo Glejser
 summary(glejser_model)
