@@ -23,6 +23,9 @@ library(knitr)
 library(caret)
 library(dplyr)
 library(gridExtra)
+library(corrplot)
+library(ggcorrplot)
+library(car)
 ```
 
 ```{r, echo=FALSE}
@@ -634,9 +637,35 @@ prueba_sw
 
 Dado que el $p_{value}$ es mayor a 0.05, en la prueba Shapir-Wilk, no se rechaza la hipótesis nula. Esto indica que los residuos del modelo pueden considerarse normalmente distribuidos. Por lo tanto, ahora mas formalmente, podemos decri que se cumple este supuesto.
 
-```{r, fig.align='center', fig.width=8, fig.height=5, echo=FALSE}
+\vspace{-10mm}
 
+```{r, fig.align='center', fig.width=4, fig.height=4, echo=FALSE}
+# Matriz de correlaciones
+data_cor <- data[, c("hrs_studied", "prev_scores", "sleep_hrs", "sample_questions", "performance_idx")]
+cor_matrix <- round(cor(data_cor), 3)
+
+# Plot
+ggcorrplot(cor_matrix, 
+           method = "circle", 
+           type = "upper", 
+           lab = TRUE, 
+           lab_size = 3, 
+           colors = c("red", "white", "blue")) 
 ```
 
+\vspace{-10mm}
+
+El análisis de correlación destaca a prev_scores como el predictor más importante del índice de rendimiento (performance_idx), con una correlación alta de 0.92, indicando una fuerte relación positiva. hrs_studied muestra una correlación moderada (0.37), lo que sugiere que las horas de estudio también influyen, aunque en menor medida. Por el contrario, sleep_hrs (0.05) y sample_questions (0.04) tienen correlaciones muy bajas, lo que implica que su impacto en el rendimiento académico es limitado. Además, las bajas correlaciones entre los predictores reducen el riesgo de multicolinealidad, lo que respalda la estabilidad del modelo ajustado.
+
+```{r fig.align='center', fig.width=5, fig.height=1, echo=FALSE}
+# VIF del modelo original
+vif_values <- vif(modelo_m)
+
+# Mostrar la tabla en Markdown
+kable(vif_values, col.names = c("Variable","VIF"), 
+      caption = "Factores de Inflación de Varianzas (VIF)")
+```
+
+Confirmando lo mencionado mas arriba, generado por la matriz de correlación, los factores de inflación de varianza (VIF) calculados para las variables predictoras del modelo muestran valores muy bajos, cercanos a 1. Esto nos indica que no existe multicolinealidad significativa entre las variables. Recordemos que un VIF mayor a 10 suele considerarse un indicador de posible multicolinealidad, mientras que valores cercanos a 1 sugieren que las variables son prácticamente independientes. Este resultado, junto con las bajas correlaciones entre los predictores observadas previamente, respalda la estabilidad del modelo de regresión lineal múltiple planteado para este proyecto.
 
 ### Conclusiones finales
