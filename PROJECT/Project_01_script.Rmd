@@ -746,7 +746,7 @@ residuales <- residuals(modelo_m)
 
 # DF auxiliar
 df_auxiliar <- data.frame(
-  residuales = abs(residuales),
+  residuales_abs = abs(residuales),
   hrs_studied = data$hrs_studied,
   prev_scores = data$prev_scores,
   xtr_activities = data$xtr_activities,
@@ -755,7 +755,7 @@ df_auxiliar <- data.frame(
 )
 
 # Prueba de Glejser 
-glejser_model <- lm(data=df_auxiliar, residuales ~ hrs_studied + prev_scores + xtr_activities + sleep_hrs + sample_questions)
+glejser_model <- lm(data=df_auxiliar, residuales_abs ~ hrs_studied + prev_scores + xtr_activities + sleep_hrs + sample_questions)
 
 # Resumen del modelo Glejser
 summary(glejser_model)
