@@ -764,7 +764,7 @@ Como podemos observar, el resultado del modelo de Glejser respalda los resultado
 
 ### 4. Normalidad
 
-```{r, fig.align='center', fig.width=3.5, fig.height=2.5, echo=FALSE}
+```{r, fig.align='center', fig.width=3.5, fig.height=2, echo=FALSE}
 # QQ Plot
 ggplot(residuals_df, aes(sample = Residuales)) +
   stat_qq() +
@@ -792,18 +792,18 @@ Dado que el $p_{value}$ es mayor a 0.05, en la prueba Shapiro-Wilk, no se rechaz
 
 \vspace{-15mm}
 
-```{r, fig.align='center', fig.width=3.5, fig.height=3.5, echo=FALSE}
+```{r, fig.align='center', fig.width=5, fig.height=4, echo=FALSE}
 # Matriz de correlaciones
 data_cor <- data[, c("hrs_studied", "prev_scores", "sleep_hrs", "sample_questions", "performance_idx")]
 cor_matrix <- round(cor(data_cor), 3)
 
 # Plot
-ggcorrplot(cor_matrix, 
-           method = "circle", 
-           type = "upper", 
-           lab = TRUE, 
-           lab_size = 3, 
-           colors = c("red", "white", "blue")) 
+corrplot(cor_matrix, 
+         method = "circle", 
+         type = "upper", 
+         tl.col = "black", 
+         tl.srt = 45, 
+         addCoef.col = "black")
 ```
 
 \vspace{-15mm}
