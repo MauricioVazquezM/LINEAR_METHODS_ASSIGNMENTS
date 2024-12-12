@@ -690,8 +690,77 @@ Observaciones:
 
 Dicho lo anterior, podemos decir que los residuos parecen distribuidos aleatoriamente en todos los gráficos, lo que respalda los supuestos de homocedasticidad e independencia. Además, no se observan patrones sistemáticos claros que sugieran problemas importantes de linealidad o heterocedasticidad.
 
+\newpage
+
 ### 3.  Varianzas no constantes (Heterocedasticidad)
 
+```{r fig.width=10, fig.height=4.5, echo=FALSE}
+# Prueba de Brown-Forsythe usando un $\alpha=0.01$
+# Residuales
+data$residual <- modelo_m$residuals
+
+# Dividiendo grupo por la mediana
+grupo.1 <- data[which(modelo_m$fitted.values <= median(modelo_m$fitted.values)),]
+grupo.2 <- data[which(modelo_m$fitted.values > median(modelo_m$fitted.values)),]
+
+# Calculando medianas de cada grupo
+mediana.epsilon.gorro.1 <- median(grupo.1$residual)
+mediana.epsilon.gorro.2 <- median(grupo.2$residual)
+
+# Calculando los valores absolutos de las desviaciones respecto a la mediana
+grupo.1$d <- abs(grupo.1$residual-mediana.epsilon.gorro.1)
+grupo.2$d <- abs(grupo.2$residual-mediana.epsilon.gorro.2)
+
+# Calculando las medias de las desviaciones absolutas en cada grupo
+d.media.1 <- mean(grupo.1$d)
+d.media.2 <- mean(grupo.2$d)
+
+# Suma de cuadrados
+SSD <-(sum((grupo.1$d - d.media.1)^2) + sum((grupo.2$d - d.media.2)^2)) / (nrow(data) - 2)
+
+# Calculando el estadisticod de prueba
+t.star.bf <- abs(d.media.1 - d.media.2)/sqrt(SSD*(1/nrow(grupo.1) + 1/nrow(grupo.2)))
+#t.star.bf
+
+# Calculando el valor p
+t.star.bf.p.value <- pt(q = t.star.bf, df = nrow(data)-2, lower.tail = FALSE)
+#t.star.bf.p.value
+print("Prueba de Brown-Forsythe usando un $\alpha=0.01$")
+```
+
+Dado que, bajo la hipótesis de varianzas constantes, la estadística de prueba sigue una distribución t, y considerando que el valor calculado de la estadística de prueba es $`r round(t.star.bf, 4)`$ y su correspondiente p-valor es $`r round(t.star.bf.p.value, 5)`$, el cual es no es menor que el nivel de significancia $\alpha = 0.01$. Debido a esto no se rechaza la hipótesis nula ($H_0$). Esto nos permite concluir que no existe evidencia suficiente para afirmar que las varianzas de los grupos no son homogéneas, lo que nos indicaría la presencia de heterocedasticidad en los datos. Por lo tanto, el modelo cumple con el supuesto de homocedasticidad.
+
+```{r fig.width=10, fig.height=4.5, echo=FALSE}
+# Prueba de Breusch-Pagan
+bp_test <- bptest(modelo_m)
+bp_test
+```
+
+Como resultado de la prueba Breusch-Pagan implementada, tenemos un $p_{value} = 0.8267$ y un $BP_{statistic} = 2.1594$ a un nivel de significancia igual a $0.05$. Por lo tanto, no se rechaza $H_0$ y nos indica que no hay evidencia de heterocedasticidad en el modelo. Los residuos tienen una varianza aproximadamente constante, lo que cumple con el supuesto de homocedasticidad requerido para un modelo de regresión lineal múltiple. Reafirmando lo que nos decia la prueba Brown-Forsythe.
+
+```{r fig.width=10, fig.height=4.5, echo=FALSE}
+# ("hrs_studied", "prev_scores", "xtr_activities", "sleep_hrs", "sample_questions", "performance_idx")
+# Residuales 
+residuales <- residuals(modelo_m)
+
+# DF auxiliar
+df_auxiliar <- data.frame(
+  residuales = abs(residuales),
+  X_1 = data$hrs_studied,
+  X_2 = data$prev_scores,
+  X_3 = data$xtr_activities,
+  X_4 = data$sleep_hrs,
+  X_5 = data$sample_questions
+)
+
+# Prueba de Glejser 
+glejser_model <- lm(data=df_auxiliar, residuales ~ X_1 + X_2 + X_3 + X_4 + X_5)
+
+# Resumen del modelo Glejser
+summary(glejser_model)
+```
+
+Como podemos observar, el resultado del modelo de Glejser respalda los resultados obtenidos previamente con la prueba de Breusch-Pagan y Brown-Forsythe. No se detecta heterocedasticidad en el modelo, lo que confirma que los residuos tienen una varianza constante. Esto  termina por validar este supuesto fundamental de la regresión lineal múltiple y respalda la confiabilidad.
 
 ### 4. Normalidad
 
@@ -721,7 +790,9 @@ Dado que el $p_{value}$ es mayor a 0.05, en la prueba Shapiro-Wilk, no se rechaz
 
 ### 5. Multicolinealidad
 
-```{r, fig.align='center', fig.width=4.5, fig.height=4.5, echo=FALSE}
+\vspace{-15mm}
+
+```{r, fig.align='center', fig.width=3.5, fig.height=3.5, echo=FALSE}
 # Matriz de correlaciones
 data_cor <- data[, c("hrs_studied", "prev_scores", "sleep_hrs", "sample_questions", "performance_idx")]
 cor_matrix <- round(cor(data_cor), 3)
@@ -734,6 +805,8 @@ ggcorrplot(cor_matrix,
            lab_size = 3, 
            colors = c("red", "white", "blue")) 
 ```
+
+\vspace{-15mm}
 
 El análisis de correlación destaca a prev_scores como el predictor más importante del índice de rendimiento (performance_idx), con una correlación alta de 0.92, indicando una fuerte relación positiva. hrs_studied muestra una correlación moderada (0.37), lo que sugiere que las horas de estudio también influyen, aunque en menor medida. Por el contrario, sleep_hrs (0.05) y sample_questions (0.04) tienen correlaciones muy bajas, lo que implica que su impacto en el rendimiento académico es limitado. Además, las bajas correlaciones entre los predictores reducen el riesgo de multicolinealidad, lo que respalda la estabilidad del modelo ajustado.
 
