@@ -493,12 +493,9 @@ coef_s_ques <- round(coeficientes[6], 3)
 ```
 
 \begin{align*}
-\hat{Y}_{\text{performance\_idx}} = `r intercept` &+ `r coef_hrs_st` \cdot X_{\text{hrs\_studied}} \\
-&+ `r coef_p_scr` \cdot X_{\text{prev\_scores}} \\ 
-&+ `r coef_xtr_act` \cdot X_{\text{xtr\_activities}} \\ 
-&+ `r coef_s_hrs` \cdot X_{\text{sleep\_hrs}} \\ 
-&+ `r coef_s_ques` \cdot X_{\text{sample\_questions}} \\
-&+ \epsilon
+\hat{Y}_{\text{performance\_idx}} = `r intercept` &+ `r coef_hrs_st` \cdot X_{\text{hrs\_studied}} + `r coef_p_scr` \cdot X_{\text{prev\_scores}}\\
+&+ `r coef_xtr_act` \cdot X_{\text{xtr\_activities}} + `r coef_s_hrs` \cdot X_{\text{sleep\_hrs}} \\ 
+&+ `r coef_s_ques` \cdot X_{\text{sample\_questions}} + \epsilon\\
 \end{align*}
 
 ```{r fig.width=10, fig.height=4.5, echo=FALSE}
@@ -529,5 +526,93 @@ anova(modelo_m)
 Como se puede analizar en la ANOVA realizado, el predictor $prev-scores$ es la variable más importante en términos de contribución a la explicación de la variabilidad en $performance-idx$, lo que sugiere que el desempeño previo es el mayor predictor del rendimiento actual. Esto se repalda por lo analizado en el exploratorio de datos. Por su parte, $hrs-studied$ también tiene un impacto significativo, demostrando que las horas de estudio son un factor clave en el rendimiento académico. Aunque las variables $xtr-activities$, $sleep-hrs$ y $sample-questions$ son estadísticamente significativas, su impacto relativo es menor en comparación con las dos variables principales. Finalmente, la cantidad de variabilidad no explicada por el modelo (residuos) es muy baja, lo que respalda el alto $R^2 = 0.9888$ del modelo.
 
 ### Diagnóstico del modelo 
+
+```{r, fig.align='center', fig.width=2.5, fig.height=2.5, echo=FALSE}
+# ("hrs_studied", "prev_scores", "xtr_activities", "sleep_hrs", "sample_questions", "performance_idx")
+
+# Supongamos que tienes un DataFrame llamado 'data'
+set.seed(123)  # Fijar semilla para reproducibilidad
+
+# Muestreo de 100 filas aleatorias sin reemplazo
+muestra <- data[sample(nrow(data), size = 100, replace = FALSE), ]
+
+# Residuales y valores ajustados
+residuales <- residuals(modelo_m)
+valores_ajustados <- fitted(modelo_m)
+
+# variable X_1 * X_2
+data$X1_X2 <- data$sample_questions / data$hrs_studied
+
+# DF auxiliar
+residuals_df <- data.frame(
+  Residuales = residuales,
+  ValoresAjustados = valores_ajustados,
+  X_1 = data$hrs_studied,
+  X_2 = data$prev_scores,
+  X_3 = data$xtr_activities,
+  X_4 = data$sleep_hrs,
+  X_5 = data$sample_questions,
+  X1_X2 = data$X1_X2
+)
+
+# QQ Plot
+ggplot(residuals_df, aes(sample = Residuales)) +
+  stat_qq() +
+  stat_qq_line(color = "red") +
+  labs(title = "QQ Plot Residuales", x = "Cuantiles Teóricos", y = "Cuantiles Residuales") +
+  theme_minimal()
+```
+
+* Como podemos observar en el QQ-plot, la mayoría de los puntos están alineados con la línea de referencia, lo que sugiere que los residuos siguen aproximadamente una distribución normal. 
+* Por otro lado, en las colas, hay ligeras desviaciones de la línea. Esto indica que podría haber algunos residuos que no siguen perfectamente una distribución normal, lo que podría deberse a valores atípicos.
+
+```{r, fig.align='center', fig.width=9, fig.height=6, echo=FALSE}
+# Plot residuales vs valores ajustados
+plot1 <- ggplot(residuals_df, aes(x = Residuales, y = ValoresAjustados)) +
+  geom_point(alpha = 0.7) +
+  labs(title = "vs. Valores Ajustados", x = "Residuales", y = "Y_hat") +
+  theme_minimal()
+
+# Plot residuales vs X_1
+plot2 <- ggplot(residuals_df, aes(x = Residuales, y = X_1)) +
+  geom_point(alpha = 0.7) +
+  labs(title = "vs. hrs_studied", x = "Residuales", y = "hrs_studied") +
+  theme_minimal()
+
+# Plot residuales vs X_2
+plot3 <- ggplot(residuals_df, aes(x = Residuales, y = X_2)) +
+  geom_point(alpha = 0.7) +
+  labs(title = "vs. prev_scores", x = "Residuales", y = "prev_scores") +
+  theme_minimal()
+
+# Plot residuales vs X_3
+plot4 <- ggplot(residuals_df, aes(x = Residuales, y = X_3)) +
+  geom_point(alpha = 0.7) +
+  labs(title = "vs. xtr_activitie", x = "Residuales", y = "xtr_activities") +
+  theme_minimal()
+
+# Plot residuales vs X_4
+plot5 <- ggplot(residuals_df, aes(x = Residuales, y = X_4)) +
+  geom_point(alpha = 0.7) +
+  labs(title = "vs. sleep_hrs", x = "Residuales", y = "sleep_hrs") +
+  theme_minimal()
+
+# Plot residuales vs X_5
+plot6 <- ggplot(residuals_df, aes(x = Residuales, y = X_5)) +
+  geom_point(alpha = 0.7) +
+  labs(title = "vs. sample_questions", x = "Residuales", y = "sample_questions") +
+  theme_minimal()
+
+# Plot residuales vs X_1 * X_2
+plot7 <- ggplot(residuals_df, aes(x = Residuales, y = X1_X2)) +
+  geom_point(alpha = 0.7) +
+  labs(title = "vs. sample_questions / hrs_studied", x = "Residuales", y = "sample_questions / hrs_studied") +
+  theme_minimal()
+
+# Grid
+grid.arrange(plot1, plot2, plot3, plot4, plot5, plot6, plot7, ncol = 3)
+```
+
+
 
 ### Conclusiones finales
